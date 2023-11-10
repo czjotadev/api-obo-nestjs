@@ -7,6 +7,7 @@ import { CollaboratorsModule } from './collaborators/collaborators.module';
 import { GuestsModule } from './guests/guests.module';
 import { CollectionsModule } from './collections/collections.module';
 import { PrismaService } from './prisma/prisma.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PrismaService } from './prisma/prisma.service';
     CollaboratorsModule,
     GuestsModule,
     CollectionsModule,
+    AuthModule,
   ],
   providers: [PrismaService],
 })

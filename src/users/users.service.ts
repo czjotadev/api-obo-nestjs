@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthUserDto } from './dto/auth-user.dto';
@@ -10,7 +15,7 @@ export class UsersService {
   constructor(private prismaClient: PrismaClient) {}
   async create(createUserDto: CreateUserDto): Promise<{ message: string }> {
     const { name, email, password } = createUserDto;
-    const hash = await bcrypt.hash(password, 5);
+    const hash = await bcrypt.hash(password, 8);
     const ifExists = await this.prismaClient.user.findFirst({
       where: {
         email,
@@ -34,8 +39,29 @@ export class UsersService {
     return { message: 'Cadastro realizado com sucesso!' };
   }
 
-  find(authUserDto: AuthUserDto) {
-    return authUserDto;
+  async find(authUserDto: AuthUserDto): Promise<UserDto | undefined> {
+    const { email, password } = authUserDto;
+    const user = await this.prismaClient.user.findFirst({
+      where: {
+        email,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+      },
+    });
+
+    if (!user) throw new UnauthorizedException();
+
+    const verifyPassword = await bcrypt.compare(password, user.password);
+
+    if (!verifyPassword) throw new UnauthorizedException();
+
+    delete user.password;
+
+    return user;
   }
 
   findAll() {
