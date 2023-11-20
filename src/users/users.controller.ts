@@ -6,12 +6,11 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+// import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -23,22 +22,16 @@ export class UsersController {
   }
 
   // @UseGuards(AuthGuard)
-  // @Get()
-  // findAll() {
-  //   return this.usersService.findAll();
-  // }
-
-  @Get(':id')
-  findOne(@Param() params: any): string {
-    console.log(params.id);
-    return `This action returns a #${params.id} cat`;
+  @Get()
+  findAll(@Param() params: any) {
+    console.log(params);
   }
 
   // @UseGuards(AuthGuard)
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(+id);
-  // }
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

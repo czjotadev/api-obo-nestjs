@@ -68,8 +68,18 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    const user = await this.prismaClient.user.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

@@ -1,15 +1,51 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePublicationDto } from './dto/create-publication.dto';
 import { UpdatePublicationDto } from './dto/update-publication.dto';
+import { PrismaClient } from '@prisma/client';
+import { PublicationDto } from './dto/publication.dto';
 
 @Injectable()
 export class PublicationsService {
-  create(createPublicationDto: CreatePublicationDto) {
-    return 'This action adds a new publication';
+  constructor(private prismaClient: PrismaClient) {}
+  async create(
+    createPublicationDto: CreatePublicationDto,
+  ): Promise<{ message: string }> {
+    const { userId, title, caption, description, categoryId, instagram } =
+      createPublicationDto;
+
+    await this.prismaClient.publication.create({
+      data: {
+        userId,
+        title,
+        caption,
+        description,
+        categoryId,
+        instagram,
+      },
+    });
+
+    return { message: 'Publicação cadastrada com sucesso!' };
   }
 
-  findAll() {
-    return `This action returns all publications`;
+  async findAll(): Promise<PublicationDto[] | undefined> {
+    const publication = this.prismaClient.publication.findMany({
+      where: {
+        active: true,
+      },
+      select: {
+        id: true,
+        user: true,
+        images: true,
+        title: true,
+        caption: true,
+        description: true,
+        category: true,
+        instagram: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    return publication;
   }
 
   findOne(id: number) {
@@ -17,7 +53,7 @@ export class PublicationsService {
   }
 
   update(id: number, updatePublicationDto: UpdatePublicationDto) {
-    return `This action updates a #${id} publication`;
+    return updatePublicationDto;
   }
 
   remove(id: number) {

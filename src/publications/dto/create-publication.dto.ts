@@ -1,1 +1,26 @@
-export class CreatePublicationDto {}
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+
+export class CreatePublicationDto {
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @IsNotEmpty()
+  @IsString()
+  caption: string;
+
+  @IsNotEmpty()
+  @IsString()
+  description: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  categoryId: number;
+
+  @IsString()
+  instagram?: string;
+}
