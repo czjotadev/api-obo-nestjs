@@ -9,14 +9,19 @@ export class CategoriesService {
   async create(
     createCategoryDto: CreateCategoryDto,
   ): Promise<{ message: string }> {
-    const { description } = createCategoryDto;
+    try {
+      const { description } = createCategoryDto;
 
-    await this.prismaClient.category.create({
-      data: {
-        description,
-      },
-    });
-    return { message: 'Cadastro realizado com sucesso' };
+      await this.prismaClient.category.create({
+        data: {
+          description,
+        },
+      });
+
+      return { message: 'Cadastro realizado com sucesso' };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async findAll(): Promise<any> {

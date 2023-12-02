@@ -3,7 +3,7 @@ import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class PublicationDto {
   @IsNotEmpty()
   @IsNumber()
-  id: number;
+  id: string;
 
   @IsNotEmpty()
   @IsString()

@@ -6,7 +6,7 @@ CREATE TABLE "users" (
     "password" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "artist" BOOLEAN NOT NULL DEFAULT false,
-    "image_id" INTEGER,
+    "image_id" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),
@@ -15,8 +15,8 @@ CREATE TABLE "users" (
 );
 
 -- CreateTable
-CREATE TABLE "UserCollaborator" (
-    "id" SERIAL NOT NULL,
+CREATE TABLE "user_collaborators" (
+    "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "biography" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
@@ -24,12 +24,12 @@ CREATE TABLE "UserCollaborator" (
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),
 
-    CONSTRAINT "UserCollaborator_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "user_collaborators_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "user_contacts" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "contact" TEXT NOT NULL,
     "contact_type" TEXT NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE "user_contacts" (
 
 -- CreateTable
 CREATE TABLE "user_addresses" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "zip_code" TEXT NOT NULL,
     "street" TEXT NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE "user_addresses" (
 
 -- CreateTable
 CREATE TABLE "user_images" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "path" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -69,7 +69,7 @@ CREATE TABLE "user_images" (
 
 -- CreateTable
 CREATE TABLE "categories" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -82,12 +82,12 @@ CREATE TABLE "categories" (
 -- CreateTable
 CREATE TABLE "products" (
     "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "url_name" TEXT NOT NULL,
+    "url_name" TEXT,
     "description" TEXT NOT NULL,
     "instagram" TEXT NOT NULL,
-    "category_id" INTEGER NOT NULL,
+    "category_id" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL,
     "showcase" BOOLEAN NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -99,10 +99,11 @@ CREATE TABLE "products" (
 
 -- CreateTable
 CREATE TABLE "product_images" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "product_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "path" TEXT NOT NULL,
+    "extension" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),
@@ -112,10 +113,10 @@ CREATE TABLE "product_images" (
 
 -- CreateTable
 CREATE TABLE "product_collections" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "product_id" TEXT NOT NULL,
-    "collection_status_id" INTEGER NOT NULL,
+    "collection_status_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),
@@ -125,7 +126,7 @@ CREATE TABLE "product_collections" (
 
 -- CreateTable
 CREATE TABLE "collection_status" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -137,13 +138,13 @@ CREATE TABLE "collection_status" (
 
 -- CreateTable
 CREATE TABLE "publications" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "caption" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "category_id" INTEGER NOT NULL,
-    "instagram" TEXT NOT NULL,
+    "category_id" TEXT NOT NULL,
+    "instagram" TEXT,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "showcase" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -155,8 +156,8 @@ CREATE TABLE "publications" (
 
 -- CreateTable
 CREATE TABLE "publication_images" (
-    "id" SERIAL NOT NULL,
-    "publication_id" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "publication_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "path" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -182,7 +183,7 @@ ALTER TABLE "user_addresses" ADD CONSTRAINT "user_addresses_user_id_fkey" FOREIG
 ALTER TABLE "products" ADD CONSTRAINT "products_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "products" ADD CONSTRAINT "products_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "products" ADD CONSTRAINT "products_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "product_images" ADD CONSTRAINT "product_images_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

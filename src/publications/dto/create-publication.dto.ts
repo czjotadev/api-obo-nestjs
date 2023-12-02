@@ -19,7 +19,7 @@ export class CreatePublicationDto {
 
   @IsNotEmpty()
   @IsNumber()
-  categoryId: number;
+  categoryId: string;
 
   @IsString()
   instagram?: string;

@@ -10,197 +10,195 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-model User{
-  id String @default(uuid()) @id
-  name String
-  email String
-  password String
-  active Boolean @default(true)
-  artist Boolean @default(false)
-  imageId Int? @unique @map("image_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String
+  password  String
+  active    Boolean   @default(true)
+  artist    Boolean   @default(false)
+  imageId   String?   @unique @map("image_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  @@map("users")
-
-  contacts UserContact[]
-  addresses UserAddress[]
-  collections ProductCollection[]
-  products Product[]
+  contacts     UserContact[]
+  addresses    UserAddress[]
+  collections  ProductCollection[]
+  products     Product[]
   publications Publication[]
 
   image UserImage? @relation(fields: [imageId], references: [id])
+
+  @@map("users")
 }
 
-model UserCollaborator{
-  id Int @default(autoincrement()) @id
-  userId String @map("user_id")
+model UserCollaborator {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
   biography String
-  active Boolean @default(true)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
+
+  @@map("user_collaborators")
 }
 
-model UserContact{
-  id Int @default(autoincrement()) @id
-  userId String @map("user_id")
-  contact String
-  contactType String @map("contact_type")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+model UserContact {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  contact     String
+  contactType String    @map("contact_type")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id])
 
   @@map("user_contacts")
 }
 
-model UserAddress{
-  id Int @default(autoincrement()) @id	
-  userId String @map("user_id")
-  zipCode String @map("zip_code")
-  street String
-  number String
+model UserAddress {
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  zipCode    String    @map("zip_code")
+  street     String
+  number     String
   complement String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @default(now()) @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id])
 
   @@map("user_addresses")
 }
 
-model UserImage{
-
-  id      Int      @id @default(autoincrement())
-  name String
-  path String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+model UserImage {
+  id        String    @id @default(uuid())
+  name      String
+  path      String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-
-  @@map("user_images")
 
   user User?
 
+  @@map("user_images")
 }
 
-model Category{
-  id Int @default(autoincrement()) @id	
+model Category {
+  id            String    @id @default(uuid())
   description String
-  active Boolean @default(true)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
 
-  @@map("categories")
-
-  produts Product[]
+  produts      Product[]
   publications Publication[]
 
+  @@map("categories")
 }
 
-model Product{
-  id String @default(uuid()) @id
-  userId String
-  name String
-  urlName String @map("url_name")
+model Product {
+  id            String    @id @default(uuid())
+  userId      String    @map("user_id")
+  name        String
+  urlName     String?   @map("url_name")
   description String
-  instagram String
-  categoryId Int @map("category_id")
-  active Boolean
-  showcase Boolean
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  instagram   String
+  categoryId  String    @map("category_id")
+  active      Boolean
+  showcase    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
 
   category Category @relation(fields: [categoryId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  images      ProductImage[]
+  collections ProductCollection[]
 
   @@map("products")
-
-  images ProductImage[]
-  collections ProductCollection[]
 }
 
-model ProductImage{
-  id Int @default(autoincrement()) @id
-  productId String @map("product_id")
-  name String
-  path String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+model ProductImage {
+  id        String    @id @default(uuid())
+  productId String    @map("product_id")
+  name      String
+  path      String
+  extension String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   product Product @relation(fields: [productId], references: [id])
 
   @@map("product_images")
-
 }
 
-model ProductCollection{
-  id Int @default(autoincrement()) @id
-  userId String @map("user_id")
-  productId String @map("product_id")
-  collectionStatusId Int @map("collection_status_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+model ProductCollection {
+  id                 String    @id @default(uuid())
+  userId             String    @map("user_id")
+  productId          String    @map("product_id")
+  collectionStatusId String    @map("collection_status_id")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @default(now()) @map("updated_at")
+  deletedAt          DateTime? @map("deleted_at")
+
+  user    User             @relation(fields: [userId], references: [id])
+  product Product          @relation(fields: [productId], references: [id])
+  status  CollectionStatus @relation(fields: [collectionStatusId], references: [id])
 
   @@map("product_collections")
-
-  user User @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-  status CollectionStatus @relation(fields: [collectionStatusId], references: [id])
 }
 
-model CollectionStatus{
-  id Int @default(autoincrement()) @id
-  description String @map("description")
-  active Boolean @default(true)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  @@map("collection_status")
+model CollectionStatus {
+  id          String    @id @default(uuid())
+  description String    @map("description")
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
 
   collection ProductCollection[]
+
+  @@map("collection_status")
 }
 
-model Publication{
-  id Int @default(autoincrement()) @id
-  userId String @map("user_id")
-  title String
-  caption String
+model Publication {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  title       String
+  caption     String
   description String
-  categoryId Int @map("category_id")
-  instagram String?
-  active Boolean @default(true)
-  showcase Boolean @default(false)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  categoryId  String    @map("category_id")
+  instagram   String?
+  active      Boolean   @default(true)
+  showcase    Boolean   @default(false)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
 
   category Category @relation(fields: [categoryId], references: [id])
-  user User @relation(fields: [userId], references: [id])
-
-  @@map("publications")
+  user     User     @relation(fields: [userId], references: [id])
 
   images PublicationImage[]
+
+  @@map("publications")
 }
 
-model PublicationImage{
-  id Int @default(autoincrement()) @id
-  publicationId Int @map("publication_id")
-  name String
-  path String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+model PublicationImage {
+  id            String    @id @default(uuid())
+  publicationId String    @map("publication_id")
+  name          String
+  path          String
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
 
   publication Publication @relation(fields: [publicationId], references: [id])
 

@@ -48,15 +48,20 @@ export class PublicationsService {
     return publication;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} publication`;
+  async findOne(id: string): Promise<PublicationDto | undefined> {
+    const publication = this.prismaClient.publication.findFirst({
+      where: {
+        id,
+      },
+    });
+    return publication[0];
   }
 
-  update(id: number, updatePublicationDto: UpdatePublicationDto) {
+  update(id: string, updatePublicationDto: UpdatePublicationDto) {
     return updatePublicationDto;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} publication`;
   }
 }
