@@ -6,6 +6,7 @@ CREATE TABLE "users" (
     "password" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "artist" BOOLEAN NOT NULL DEFAULT false,
+    "admin" BOOLEAN NOT NULL DEFAULT false,
     "image_id" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

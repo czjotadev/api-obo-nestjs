@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   CanActivate,
   ExecutionContext,
@@ -5,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
+import { jwtConstants } from '../constants';
 import { Request } from 'express';
 
 @Injectable()

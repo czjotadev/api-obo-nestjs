@@ -49,6 +49,7 @@ export class UsersService {
         id: true,
         name: true,
         email: true,
+        admin: true,
         password: true,
       },
     });

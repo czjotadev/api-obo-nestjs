@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '@prisma/client';
@@ -9,43 +9,50 @@ export class ProductsService {
   async create(
     createProductDto: CreateProductDto,
     files: Express.Multer.File[],
-  ) {
-    const {
-      userId,
-      name,
-      urlName,
-      description,
-      instagram,
-      categoryId,
-      showcase,
-      active,
-    } = createProductDto;
-
-    const product = await this.prismaClient.product.create({
-      data: {
+  ): Promise<{ message: string }> {
+    try {
+      const {
         userId,
         name,
         urlName,
         description,
         instagram,
         categoryId,
-        showcase: showcase === 'true' ? true : false,
-        active: active === 'true' ? true : false,
-      },
-    });
+        showcase,
+        active,
+      } = createProductDto;
 
-    files.map(async (file) => {
-      await this.prismaClient.productImage.create({
+      const product = await this.prismaClient.product.create({
         data: {
-          name: file.filename,
-          path: file.path,
-          productId: product.id,
-          extension: file.mimetype,
+          userId,
+          name,
+          urlName,
+          description,
+          instagram,
+          categoryId,
+          showcase: showcase === 'true' ? true : false,
+          active: active === 'true' ? true : false,
         },
       });
-    });
 
-    return { message: 'Cadastro realizado com sucesso!' };
+      files.map(async (file) => {
+        await this.prismaClient.productImage.create({
+          data: {
+            name: file.filename,
+            path: file.path,
+            productId: product.id,
+            extension: file.mimetype,
+          },
+        });
+      });
+
+      return { message: 'Cadastro realizado com sucesso!' };
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Não foi possível cadastrar o produto.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   findAll() {

@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFiles,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -15,6 +16,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { AuthGuardAdmin } from 'src/auth/guard/adm-auth.guard';
 
 const storage = diskStorage({
   destination: './upload/products/images',
@@ -29,12 +31,13 @@ const storage = diskStorage({
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @UseGuards(AuthGuardAdmin)
   @Post()
   @UseInterceptors(FilesInterceptor('files', 10, { storage }))
   create(
     @Body() createProductDto: CreateProductDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
-  ) {
+  ): Promise<{ message: string }> {
     return this.productsService.create(createProductDto, files);
   }
 
