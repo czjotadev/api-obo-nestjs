@@ -9,11 +9,12 @@ export class PublicationsService {
   constructor(private prismaClient: PrismaClient) {}
   async create(
     createPublicationDto: CreatePublicationDto,
+    files: Array<Express.Multer.File>,
   ): Promise<{ message: string }> {
     const { userId, title, caption, description, categoryId, instagram } =
       createPublicationDto;
 
-    await this.prismaClient.publication.create({
+    const publication = await this.prismaClient.publication.create({
       data: {
         userId,
         title,
@@ -22,6 +23,16 @@ export class PublicationsService {
         categoryId,
         instagram,
       },
+    });
+
+    files.map(async (file) => {
+      await this.prismaClient.publicationImage.create({
+        data: {
+          name: file.filename,
+          path: file.path,
+          publicationId: publication.id,
+        },
+      });
     });
 
     return { message: 'Publicação cadastrada com sucesso!' };
