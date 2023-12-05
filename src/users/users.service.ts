@@ -65,8 +65,17 @@ export class UsersService {
     return user;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    try {
+      const users = await this.prismaClient.user.findMany();
+
+      return users;
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Erro ao listar os usuários.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async findOne(id: string) {
@@ -83,11 +92,11 @@ export class UsersService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     return updateUserDto;
   }
 
-  remove(id: number) {
+  async remove(id: string) {
     return `This action removes a #${id} user`;
   }
 }
