@@ -5,13 +5,13 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {
   @IsString()
   @IsNotEmpty()
-  id: string;
+  title?: string;
 
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description?: string;
 
   @IsString()
   @IsNotEmpty()
-  active: string;
+  active?: string;
 }

@@ -6,40 +6,45 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { CollaboratorsService } from './collaborators.service';
 import { CreateCollaboratorDto } from './dto/create-collaborator.dto';
 import { UpdateCollaboratorDto } from './dto/update-collaborator.dto';
+import { AuthGuardAdmin } from 'src/auth/guard/adm-auth.guard';
 
 @Controller('collaborators')
 export class CollaboratorsController {
   constructor(private readonly collaboratorsService: CollaboratorsService) {}
 
+  @UseGuards(AuthGuardAdmin)
   @Post()
-  create(@Body() createCollaboratorDto: CreateCollaboratorDto) {
+  async create(@Body() createCollaboratorDto: CreateCollaboratorDto) {
     return this.collaboratorsService.create(createCollaboratorDto);
   }
 
   @Get()
-  findAll() {
-    return this.collaboratorsService.findAll();
+  async findAll() {
+    return await this.collaboratorsService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.collaboratorsService.findOne(+id);
+    return this.collaboratorsService.findOne(id);
   }
 
+  @UseGuards(AuthGuardAdmin)
   @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() updateCollaboratorDto: UpdateCollaboratorDto,
   ) {
-    return this.collaboratorsService.update(+id, updateCollaboratorDto);
+    return this.collaboratorsService.update(id, updateCollaboratorDto);
   }
 
+  @UseGuards(AuthGuardAdmin)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.collaboratorsService.remove(+id);
+    return this.collaboratorsService.remove(id);
   }
 }

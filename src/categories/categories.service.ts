@@ -43,28 +43,34 @@ export class CategoriesService {
   async findOne(id: string) {
     try {
       const category = await this.prismaClient.category.findFirstOrThrow({
+        select: {
+          id: true,
+          title: true,
+          description: true,
+        },
         where: {
           id,
-          active: true,
         },
       });
       return category;
     } catch (error) {
       throw new HttpException(
-        { message: 'Não foi possível carregar os dados da categorai.' },
+        { message: 'Não foi possível carregar os dados da categoria.' },
         HttpStatus.BAD_REQUEST,
       );
     }
   }
 
-  async update(updateCategoryDto: UpdateCategoryDto) {
+  async update(id, updateCategoryDto: UpdateCategoryDto) {
     try {
-      const { id, description, active } = updateCategoryDto;
+      const { title, description, active } = updateCategoryDto;
 
       await this.prismaClient.category.update({
         data: {
+          title,
           description,
           active: active === 'true' ? true : false,
+          updatedAt: new Date(),
         },
         where: {
           id,

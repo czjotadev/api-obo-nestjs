@@ -39,12 +39,15 @@ export class UsersService {
     return { message: 'Cadastro realizado com sucesso!' };
   }
 
-  async details() {
+  async details(id: string) {
     return await this.prismaClient.user.findFirst({
       select: {
         id: true,
         name: true,
         email: true,
+      },
+      where: {
+        id,
       },
     });
   }

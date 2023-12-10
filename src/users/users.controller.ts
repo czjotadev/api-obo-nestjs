@@ -6,13 +6,14 @@ import {
   Patch,
   Param,
   Delete,
-  // UseGuards,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-// import { AuthGuard } from 'src/auth/guard/auth.guard';
-// import { AuthGuardAdmin } from 'src/auth/guard/adm-auth.guard';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { AuthGuardAdmin } from 'src/auth/guard/adm-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -23,30 +24,39 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  // @UseGuards(AuthGuardAdmin)
+  @UseGuards(AuthGuard)
+  @Get('/details')
+  async details(@Req() request: Request) {
+    const id = request['user'].sub;
+    return await this.usersService.details(id);
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('/update')
+  async update(@Req() request: Request, @Body() updateUserDto: UpdateUserDto) {
+    const id: string = request['user'].sub;
+    return await this.usersService.update(id, updateUserDto);
+  }
+
+  @UseGuards(AuthGuardAdmin)
   @Get()
   async findAll() {
     return await this.usersService.findAll();
   }
 
-  @Get('/details')
-  async details() {
-    return await this.usersService.details();
-  }
-
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuardAdmin)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuardAdmin)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  admUpdate(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuardAdmin)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
