@@ -71,6 +71,7 @@ CREATE TABLE "user_images" (
 -- CreateTable
 CREATE TABLE "categories" (
     "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL DEFAULT 'category',
     "description" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

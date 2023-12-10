@@ -39,6 +39,16 @@ export class UsersService {
     return { message: 'Cadastro realizado com sucesso!' };
   }
 
+  async details() {
+    return await this.prismaClient.user.findFirst({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+  }
+
   async find(authUserDto: AuthUserDto): Promise<UserDto | undefined> {
     const { email, password } = authUserDto;
     const user = await this.prismaClient.user.findFirst({
@@ -67,7 +77,13 @@ export class UsersService {
 
   async findAll() {
     try {
-      const users = await this.prismaClient.user.findMany();
+      const users = await this.prismaClient.user.findMany({
+        select: {
+          name: true,
+          email: true,
+          admin: true,
+        },
+      });
 
       return users;
     } catch (error) {

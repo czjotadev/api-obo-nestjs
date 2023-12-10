@@ -9,30 +9,26 @@ export class CategoriesService {
   async create(
     createCategoryDto: CreateCategoryDto,
   ): Promise<{ message: string }> {
-    try {
-      const { description, active } = createCategoryDto;
+    const { description, active, title } = createCategoryDto;
 
-      await this.prismaClient.category.create({
-        data: {
-          description,
-          active: active === 'true' ? true : false,
-        },
-      });
+    await this.prismaClient.category.create({
+      data: {
+        title,
+        description,
+        active: active === 'true' ? true : false,
+      },
+    });
 
-      return { message: 'Cadastro realizado com sucesso' };
-    } catch (error) {
-      throw new HttpException(
-        { message: 'Não foi cadastrar a categorai.' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    return { message: 'Cadastro realizado com sucesso' };
   }
 
   async findAll(): Promise<any> {
     try {
       const categories = await this.prismaClient.category.findMany({
-        where: {
-          active: true,
+        select: {
+          id: true,
+          description: true,
+          title: true,
         },
       });
       return categories;

@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,25 +8,23 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  name      String
-  email     String
-  password  String
-  active    Boolean   @default(true)
-  artist    Boolean   @default(false)
-  admin     Boolean   @default(false)
-  imageId   String?   @unique @map("image_id")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  contacts     UserContact[]
-  addresses    UserAddress[]
+  id           String              @id @default(uuid())
+  name         String
+  email        String
+  password     String
+  active       Boolean             @default(true)
+  artist       Boolean             @default(false)
+  admin        Boolean             @default(false)
+  imageId      String?             @unique @map("image_id")
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @default(now()) @map("updated_at")
+  deletedAt    DateTime?           @map("deleted_at")
   collections  ProductCollection[]
   products     Product[]
   publications Publication[]
-
-  image UserImage? @relation(fields: [imageId], references: [id])
+  addresses    UserAddress[]
+  contacts     UserContact[]
+  image        UserImage?          @relation(fields: [imageId], references: [id])
 
   @@map("users")
 }
@@ -54,8 +49,7 @@ model UserContact {
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @default(now()) @map("updated_at")
   deletedAt   DateTime? @map("deleted_at")
-
-  user User @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
 
   @@map("user_contacts")
 }
@@ -70,8 +64,7 @@ model UserAddress {
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @default(now()) @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
-
-  user User @relation(fields: [userId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
 
   @@map("user_addresses")
 }
@@ -83,20 +76,19 @@ model UserImage {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @default(now()) @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-
-  user User?
+  user      User?
 
   @@map("user_images")
 }
 
 model Category {
-  id          String    @id @default(uuid())
-  description String
-  active      Boolean   @default(true)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @default(now()) @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-
+  id           String        @id @default(uuid())
+  title        String        @default("category")
+  description  String
+  active       Boolean       @default(true)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @default(now()) @map("updated_at")
+  deletedAt    DateTime?     @map("deleted_at")
   produts      Product[]
   publications Publication[]
 
@@ -104,24 +96,22 @@ model Category {
 }
 
 model Product {
-  id          String    @id @default(uuid())
-  userId      String    @map("user_id")
+  id          String              @id @default(uuid())
+  userId      String              @map("user_id")
   name        String
-  urlName     String?   @map("url_name")
+  urlName     String?             @map("url_name")
   description String
   instagram   String
-  categoryId  String    @map("category_id")
+  categoryId  String              @map("category_id")
   active      Boolean
   showcase    Boolean
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @default(now()) @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-
-  category Category @relation(fields: [categoryId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
-
-  images      ProductImage[]
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @default(now()) @map("updated_at")
+  deletedAt   DateTime?           @map("deleted_at")
   collections ProductCollection[]
+  images      ProductImage[]
+  category    Category            @relation(fields: [categoryId], references: [id])
+  user        User                @relation(fields: [userId], references: [id])
 
   @@map("products")
 }
@@ -135,73 +125,67 @@ model ProductImage {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @default(now()) @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-
-  product Product @relation(fields: [productId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
 
   @@map("product_images")
 }
 
 model ProductCollection {
-  id                 String    @id @default(uuid())
-  userId             String    @map("user_id")
-  productId          String    @map("product_id")
-  collectionStatusId String    @map("collection_status_id")
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @default(now()) @map("updated_at")
-  deletedAt          DateTime? @map("deleted_at")
-
-  user    User             @relation(fields: [userId], references: [id])
-  product Product          @relation(fields: [productId], references: [id])
-  status  CollectionStatus @relation(fields: [collectionStatusId], references: [id])
+  id                 String           @id @default(uuid())
+  userId             String           @map("user_id")
+  productId          String           @map("product_id")
+  collectionStatusId String           @map("collection_status_id")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @default(now()) @map("updated_at")
+  deletedAt          DateTime?        @map("deleted_at")
+  status             CollectionStatus @relation(fields: [collectionStatusId], references: [id])
+  product            Product          @relation(fields: [productId], references: [id])
+  user               User             @relation(fields: [userId], references: [id])
 
   @@map("product_collections")
 }
 
 model CollectionStatus {
-  id          String    @id @default(uuid())
-  description String    @map("description")
-  active      Boolean   @default(true)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @default(now()) @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-
-  collection ProductCollection[]
+  id          String              @id @default(uuid())
+  description String              @map("description")
+  active      Boolean             @default(true)
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @default(now()) @map("updated_at")
+  deletedAt   DateTime?           @map("deleted_at")
+  collection  ProductCollection[]
 
   @@map("collection_status")
 }
 
 model Publication {
-  id          String    @id @default(uuid())
-  userId      String    @map("user_id")
+  id          String             @id @default(uuid())
+  userId      String             @map("user_id")
   title       String
   caption     String
   description String
-  categoryId  String    @map("category_id")
+  categoryId  String             @map("category_id")
   instagram   String?
-  active      Boolean   @default(true)
-  showcase    Boolean   @default(false)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @default(now()) @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-
-  category Category @relation(fields: [categoryId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
-
-  images PublicationImage[]
+  active      Boolean            @default(true)
+  showcase    Boolean            @default(false)
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @default(now()) @map("updated_at")
+  deletedAt   DateTime?          @map("deleted_at")
+  images      PublicationImage[]
+  category    Category           @relation(fields: [categoryId], references: [id])
+  user        User               @relation(fields: [userId], references: [id])
 
   @@map("publications")
 }
 
 model PublicationImage {
-  id            String    @id @default(uuid())
-  publicationId String    @map("publication_id")
+  id            String      @id @default(uuid())
+  publicationId String      @map("publication_id")
   name          String
   path          String
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @default(now()) @map("updated_at")
-  deletedAt     DateTime? @map("deleted_at")
-
-  publication Publication @relation(fields: [publicationId], references: [id])
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @default(now()) @map("updated_at")
+  deletedAt     DateTime?   @map("deleted_at")
+  publication   Publication @relation(fields: [publicationId], references: [id])
 
   @@map("publication_images")
 }
