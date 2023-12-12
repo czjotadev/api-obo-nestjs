@@ -8,10 +8,11 @@ import { PublicationDto } from './dto/publication.dto';
 export class PublicationsService {
   constructor(private prismaClient: PrismaClient) {}
   async create(
+    userId: string,
     createPublicationDto: CreatePublicationDto,
     files: Array<Express.Multer.File>,
   ): Promise<{ message: string }> {
-    const { userId, title, caption, description, categoryId, instagram } =
+    const { title, caption, description, categoryId, instagram } =
       createPublicationDto;
 
     const publication = await this.prismaClient.publication.create({
@@ -45,12 +46,25 @@ export class PublicationsService {
       },
       select: {
         id: true,
-        user: true,
-        images: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        images: {
+          select: {
+            path: true,
+          },
+        },
         title: true,
         caption: true,
         description: true,
-        category: true,
+        category: {
+          select: {
+            title: true,
+          },
+        },
         instagram: true,
         createdAt: true,
         updatedAt: true,
@@ -60,12 +74,37 @@ export class PublicationsService {
   }
 
   async findOne(id: string): Promise<PublicationDto | undefined> {
-    const publication = this.prismaClient.publication.findFirst({
+    const publication = await this.prismaClient.publication.findFirst({
       where: {
         id,
       },
+      select: {
+        id: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        images: {
+          select: {
+            path: true,
+          },
+        },
+        title: true,
+        caption: true,
+        description: true,
+        category: {
+          select: {
+            title: true,
+          },
+        },
+        instagram: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
-    return publication[0];
+    return publication;
   }
 
   update(id: string, updatePublicationDto: UpdatePublicationDto) {

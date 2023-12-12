@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFiles,
+  Req,
 } from '@nestjs/common';
 import { PublicationsService } from './publications.service';
 import { CreatePublicationDto } from './dto/create-publication.dto';
@@ -38,8 +39,10 @@ export class PublicationsController {
   async create(
     @Body() createPublicationDto: CreatePublicationDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
+    @Req() request: Request,
   ): Promise<{ message: string }> {
-    return this.publicationsService.create(createPublicationDto, files);
+    const userId = request['user'].sub;
+    return this.publicationsService.create(userId, createPublicationDto, files);
   }
 
   @Get()

@@ -8,9 +8,15 @@ import { GuestsModule } from './guests/guests.module';
 import { CollectionsModule } from './collections/collections.module';
 import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'upload'),
+      serveRoot: '/upload',
+    }),
     ProductsModule,
     UsersModule,
     CategoriesModule,

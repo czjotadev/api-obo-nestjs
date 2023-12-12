@@ -3,10 +3,6 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class CreatePublicationDto {
   @IsNotEmpty()
   @IsString()
-  userId: string;
-
-  @IsNotEmpty()
-  @IsString()
   title: string;
 
   @IsNotEmpty()
