@@ -82,6 +82,7 @@ export class UsersService {
     try {
       const users = await this.prismaClient.user.findMany({
         select: {
+          id: true,
           name: true,
           email: true,
           admin: true,
