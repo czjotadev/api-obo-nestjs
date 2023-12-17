@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -40,7 +41,7 @@ export class UsersController {
 
   @UseGuards(AuthGuardAdmin)
   @Get()
-  async findAll(@Param('skip') skip: string, @Param('take') take: string) {
+  async findAll(@Query('skip') skip: string, @Query('take') take: string) {
     return await this.usersService.findAll(+skip, +take);
   }
 

@@ -115,8 +115,8 @@ export class UsersService {
         where: {
           deletedAt: null,
         },
-        skip,
-        take,
+        skip: skip ? skip : 0,
+        take: take ? take : 10,
       });
 
       return users;
