@@ -30,6 +30,9 @@ export class CategoriesService {
           description: true,
           title: true,
         },
+        where: {
+          deletedAt: null,
+        },
       });
       return categories;
     } catch (error) {
@@ -50,6 +53,7 @@ export class CategoriesService {
         },
         where: {
           id,
+          deletedAt: null,
         },
       });
       return category;
@@ -74,6 +78,7 @@ export class CategoriesService {
         },
         where: {
           id,
+          deletedAt: null,
         },
       });
 
@@ -94,6 +99,7 @@ export class CategoriesService {
         },
         where: {
           id,
+          deletedAt: null,
         },
       });
 
