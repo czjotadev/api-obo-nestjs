@@ -40,8 +40,8 @@ export class UsersController {
 
   @UseGuards(AuthGuardAdmin)
   @Get()
-  async findAll() {
-    return await this.usersService.findAll();
+  async findAll(@Param('skip') skip: string, @Param('take') take: string) {
+    return await this.usersService.findAll(+skip, +take);
   }
 
   @UseGuards(AuthGuardAdmin)
@@ -52,8 +52,12 @@ export class UsersController {
 
   @UseGuards(AuthGuardAdmin)
   @Patch(':id')
-  admUpdate(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  async admUpdate(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Body() admin: boolean = false,
+  ) {
+    return this.usersService.update(id, updateUserDto, admin);
   }
 
   @UseGuards(AuthGuardAdmin)

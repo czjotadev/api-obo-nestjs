@@ -11,20 +11,22 @@ model User {
   id               String              @id @default(uuid())
   name             String
   email            String
+  address          String?
+  phone            String?
   password         String
   active           Boolean             @default(true)
   artist           Boolean             @default(false)
   admin            Boolean             @default(false)
-  imageId          String?             @unique @map("image_id")
+  // imageId          String?             @unique @map("image_id")
   createdAt        DateTime            @default(now()) @map("created_at")
   updatedAt        DateTime            @default(now()) @map("updated_at")
   deletedAt        DateTime?           @map("deleted_at")
   collections      ProductCollection[]
   products         Product[]
   publications     Publication[]
-  addresses        UserAddress[]
-  contacts         UserContact[]
-  image            UserImage?          @relation(fields: [imageId], references: [id])
+  // addresses        UserAddress[]
+  // contacts         UserContact[]
+  // image            UserImage?          @relation(fields: [imageId], references: [id])
   UserCollaborator UserCollaborator[]
 
   @@map("users")
@@ -44,45 +46,45 @@ model UserCollaborator {
   @@map("user_collaborators")
 }
 
-model UserContact {
-  id          String    @id @default(uuid())
-  userId      String    @map("user_id")
-  contact     String
-  contactType String    @map("contact_type")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @default(now()) @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-  user        User      @relation(fields: [userId], references: [id])
+// model UserContact {
+//   id          String    @id @default(uuid())
+//   userId      String    @map("user_id")
+//   contact     String
+//   contactType String    @map("contact_type")
+//   createdAt   DateTime  @default(now()) @map("created_at")
+//   updatedAt   DateTime  @default(now()) @map("updated_at")
+//   deletedAt   DateTime? @map("deleted_at")
+//   user        User      @relation(fields: [userId], references: [id])
 
-  @@map("user_contacts")
-}
+//   @@map("user_contacts")
+// }
 
-model UserAddress {
-  id         String    @id @default(uuid())
-  userId     String    @map("user_id")
-  zipCode    String    @map("zip_code")
-  street     String
-  number     String
-  complement String
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @default(now()) @map("updated_at")
-  deletedAt  DateTime? @map("deleted_at")
-  user       User      @relation(fields: [userId], references: [id])
+// model UserAddress {
+//   id         String    @id @default(uuid())
+//   userId     String    @map("user_id")
+//   zipCode    String    @map("zip_code")
+//   street     String
+//   number     String
+//   complement String
+//   createdAt  DateTime  @default(now()) @map("created_at")
+//   updatedAt  DateTime  @default(now()) @map("updated_at")
+//   deletedAt  DateTime? @map("deleted_at")
+//   user       User      @relation(fields: [userId], references: [id])
 
-  @@map("user_addresses")
-}
+//   @@map("user_addresses")
+// }
 
-model UserImage {
-  id        String    @id @default(uuid())
-  name      String
-  path      String
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-  user      User?
+// model UserImage {
+//   id        String    @id @default(uuid())
+//   name      String
+//   path      String
+//   createdAt DateTime  @default(now()) @map("created_at")
+//   updatedAt DateTime  @default(now()) @map("updated_at")
+//   deletedAt DateTime? @map("deleted_at")
+//   user      User?
 
-  @@map("user_images")
-}
+//   @@map("user_images")
+// }
 
 model Category {
   id           String        @id @default(uuid())

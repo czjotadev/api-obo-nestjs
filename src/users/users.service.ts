@@ -14,79 +14,109 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(private prismaClient: PrismaClient) {}
   async create(createUserDto: CreateUserDto): Promise<{ message: string }> {
-    const { name, email, password } = createUserDto;
-    const hash = await bcrypt.hash(password, 8);
-    const ifExists = await this.prismaClient.user.findFirst({
-      where: {
-        email,
-      },
-    });
+    try {
+      const { name, email, password } = createUserDto;
+      const hash = await bcrypt.hash(password, 8);
+      const ifExists = await this.prismaClient.user.findFirst({
+        where: {
+          email,
+        },
+      });
 
-    if (ifExists)
+      if (ifExists)
+        throw new HttpException(
+          'Não é possível cadastrar um usuário com os dados informados',
+          HttpStatus.BAD_REQUEST,
+        );
+
+      await this.prismaClient.user.create({
+        data: {
+          name,
+          email,
+          password: hash,
+        },
+      });
+
+      return { message: 'Cadastro realizado com sucesso!' };
+    } catch (error) {
       throw new HttpException(
-        'Não é possível cadastrar um usuário com os dados informados',
+        'Erro ao cadastrar o usuário.',
         HttpStatus.BAD_REQUEST,
       );
-
-    await this.prismaClient.user.create({
-      data: {
-        name,
-        email,
-        password: hash,
-      },
-    });
-
-    return { message: 'Cadastro realizado com sucesso!' };
+    }
   }
 
   async details(id: string) {
-    return await this.prismaClient.user.findFirst({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-      },
-      where: {
-        id,
-      },
-    });
+    try {
+      return await this.prismaClient.user.findFirst({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          address: true,
+        },
+        where: {
+          id,
+          deletedAt: null,
+        },
+      });
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Erro ao consultar o usuário.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async find(authUserDto: AuthUserDto): Promise<UserDto | undefined> {
-    const { email, password } = authUserDto;
-    const user = await this.prismaClient.user.findFirst({
-      where: {
-        email,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        admin: true,
-        password: true,
-      },
-    });
+    try {
+      const { email, password } = authUserDto;
+      const user = await this.prismaClient.user.findFirst({
+        where: {
+          email,
+          active: true,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          admin: true,
+          password: true,
+        },
+      });
 
-    if (!user) throw new UnauthorizedException();
+      if (!user) throw new UnauthorizedException();
 
-    const verifyPassword = await bcrypt.compare(password, user.password);
+      const verifyPassword = await bcrypt.compare(password, user.password);
 
-    if (!verifyPassword) throw new UnauthorizedException();
+      if (!verifyPassword) throw new UnauthorizedException();
 
-    delete user.password;
+      delete user.password;
 
-    return user;
+      return user;
+    } catch (error) {
+      throw new UnauthorizedException();
+    }
   }
 
-  async findAll() {
+  async findAll(skip: number, take: number) {
     try {
       const users = await this.prismaClient.user.findMany({
         select: {
           id: true,
           name: true,
           email: true,
+          phone: true,
+          address: true,
           admin: true,
         },
+        where: {
+          deletedAt: null,
+        },
+        skip,
+        take,
       });
 
       return users;
@@ -99,24 +129,77 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const user = await this.prismaClient.user.findFirst({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-      },
-    });
-    return user;
+    try {
+      const user = await this.prismaClient.user.findFirst({
+        where: {
+          id,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          address: true,
+          admin: true,
+        },
+      });
+      return user;
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Erro ao consultar usuário.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    return updateUserDto;
+  async update(id: string, updateUserDto: UpdateUserDto, admin?: boolean) {
+    try {
+      const { name, phone, address, password } = updateUserDto;
+      const user = await this.prismaClient.user.findFirstOrThrow({
+        where: {
+          id,
+        },
+      });
+      const hash = password ? await bcrypt.hash(password, 8) : user.password;
+      await this.prismaClient.user.update({
+        where: {
+          id,
+        },
+        data: {
+          name,
+          phone,
+          address,
+          password: hash,
+          admin,
+        },
+      });
+      return { message: 'Usuário atualizado com sucesso!' };
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Erro ao editar o usuário.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async remove(id: string) {
-    return `This action removes a #${id} user`;
+    try {
+      await this.prismaClient.user.update({
+        where: {
+          id,
+        },
+        data: {
+          deletedAt: new Date(),
+          active: false,
+        },
+      });
+      return { message: 'Usuário removido com sucesso!' };
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Erro ao excluir usuário.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }
