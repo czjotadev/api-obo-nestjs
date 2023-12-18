@@ -11,5 +11,5 @@ export class CreateCategoryDto {
 
   @IsNotEmpty()
   @IsString()
-  active: string;
+  active: boolean;
 }

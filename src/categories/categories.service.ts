@@ -15,7 +15,7 @@ export class CategoriesService {
       data: {
         title,
         description,
-        active: active === 'true' ? true : false,
+        active,
       },
     });
 
@@ -75,7 +75,7 @@ export class CategoriesService {
         data: {
           title,
           description,
-          active: active === 'true' ? true : false,
+          active,
           updatedAt: new Date(),
         },
         where: {
