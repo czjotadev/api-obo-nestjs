@@ -29,6 +29,7 @@ export class CategoriesService {
           id: true,
           description: true,
           title: true,
+          active: true,
         },
         where: {
           deletedAt: null,
@@ -50,6 +51,7 @@ export class CategoriesService {
           id: true,
           title: true,
           description: true,
+          active: true,
         },
         where: {
           id,

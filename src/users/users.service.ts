@@ -13,7 +13,9 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsersService {
   constructor(private prismaClient: PrismaClient) {}
-  async create(createUserDto: CreateUserDto): Promise<{ message: string }> {
+  async create(
+    createUserDto: CreateUserDto,
+  ): Promise<{ message: string; id: string }> {
     try {
       const { name, email, password } = createUserDto;
       const hash = await bcrypt.hash(password, 8);
@@ -29,7 +31,7 @@ export class UsersService {
           HttpStatus.BAD_REQUEST,
         );
 
-      await this.prismaClient.user.create({
+      const user = await this.prismaClient.user.create({
         data: {
           name,
           email,
@@ -37,7 +39,7 @@ export class UsersService {
         },
       });
 
-      return { message: 'Cadastro realizado com sucesso!' };
+      return { message: 'Cadastro realizado com sucesso!', id: user.id };
     } catch (error) {
       throw new HttpException(
         'Erro ao cadastrar o usuário.',
