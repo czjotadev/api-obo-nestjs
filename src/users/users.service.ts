@@ -171,7 +171,7 @@ export class UsersService {
           phone,
           address,
           password: hash,
-          admin,
+          admin: admin ? admin : false,
         },
       });
       return { message: 'Usuário atualizado com sucesso!' };

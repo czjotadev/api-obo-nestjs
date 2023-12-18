@@ -56,9 +56,8 @@ export class UsersController {
   async admUpdate(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-    @Body() admin: boolean = false,
   ) {
-    return this.usersService.update(id, updateUserDto, admin);
+    return this.usersService.update(id, updateUserDto, updateUserDto.admin);
   }
 
   @UseGuards(AuthGuardAdmin)
