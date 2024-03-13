@@ -1,5 +1,5 @@
 export class CreateProductDto {
-  userId: string;
+  userArtistId: string;
   name: string;
   urlName?: string;
   description: string;

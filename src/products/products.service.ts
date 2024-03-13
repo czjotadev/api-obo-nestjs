@@ -12,7 +12,7 @@ export class ProductsService {
   ): Promise<{ message: string }> {
     try {
       const {
-        userId,
+        userArtistId,
         name,
         urlName,
         description,
@@ -24,7 +24,7 @@ export class ProductsService {
 
       const product = await this.prismaClient.product.create({
         data: {
-          userId,
+          userArtistId,
           name,
           urlName,
           description,

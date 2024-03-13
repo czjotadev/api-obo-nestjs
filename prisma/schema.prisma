@@ -15,19 +15,14 @@ model User {
   phone            String?
   password         String
   active           Boolean             @default(true)
-  artist           Boolean             @default(false)
   admin            Boolean             @default(false)
-  // imageId          String?             @unique @map("image_id")
   createdAt        DateTime            @default(now()) @map("created_at")
   updatedAt        DateTime            @default(now()) @map("updated_at")
   deletedAt        DateTime?           @map("deleted_at")
   collections      ProductCollection[]
-  products         Product[]
   publications     Publication[]
-  // addresses        UserAddress[]
-  // contacts         UserContact[]
-  // image            UserImage?          @relation(fields: [imageId], references: [id])
   UserCollaborator UserCollaborator[]
+  UserArtist       UserArtist[]
 
   @@map("users")
 }
@@ -46,45 +41,39 @@ model UserCollaborator {
   @@map("user_collaborators")
 }
 
-// model UserContact {
-//   id          String    @id @default(uuid())
-//   userId      String    @map("user_id")
-//   contact     String
-//   contactType String    @map("contact_type")
-//   createdAt   DateTime  @default(now()) @map("created_at")
-//   updatedAt   DateTime  @default(now()) @map("updated_at")
-//   deletedAt   DateTime? @map("deleted_at")
-//   user        User      @relation(fields: [userId], references: [id])
+model UserArtist {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  biography String
+  instagram String?
+  email     String?
+  phone     String?
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
-//   @@map("user_contacts")
-// }
+  user User @relation(fields: [userId], references: [id])
 
-// model UserAddress {
-//   id         String    @id @default(uuid())
-//   userId     String    @map("user_id")
-//   zipCode    String    @map("zip_code")
-//   street     String
-//   number     String
-//   complement String
-//   createdAt  DateTime  @default(now()) @map("created_at")
-//   updatedAt  DateTime  @default(now()) @map("updated_at")
-//   deletedAt  DateTime? @map("deleted_at")
-//   user       User      @relation(fields: [userId], references: [id])
+  userArtistImage UserArtistImage[]
+  Product         Product[]
 
-//   @@map("user_addresses")
-// }
+  @@map("user_artists")
+}
 
-// model UserImage {
-//   id        String    @id @default(uuid())
-//   name      String
-//   path      String
-//   createdAt DateTime  @default(now()) @map("created_at")
-//   updatedAt DateTime  @default(now()) @map("updated_at")
-//   deletedAt DateTime? @map("deleted_at")
-//   user      User?
+model UserArtistImage {
+  id           String    @id @default(uuid())
+  userArtistId String    @map("user_artist_id")
+  name         String
+  path         String
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
 
-//   @@map("user_images")
-// }
+  userArtist UserArtist @relation(fields: [userArtistId], references: [id])
+
+  @@map("user_artist_images")
+}
 
 model Category {
   id           String        @id @default(uuid())
@@ -101,22 +90,22 @@ model Category {
 }
 
 model Product {
-  id          String              @id @default(uuid())
-  userId      String              @map("user_id")
-  name        String
-  urlName     String?             @map("url_name")
-  description String
-  instagram   String
-  categoryId  String              @map("category_id")
-  active      Boolean
-  showcase    Boolean
-  createdAt   DateTime            @default(now()) @map("created_at")
-  updatedAt   DateTime            @default(now()) @map("updated_at")
-  deletedAt   DateTime?           @map("deleted_at")
-  collections ProductCollection[]
-  images      ProductImage[]
-  category    Category            @relation(fields: [categoryId], references: [id])
-  user        User                @relation(fields: [userId], references: [id])
+  id           String              @id @default(uuid())
+  userArtistId String              @map("user_artist_id")
+  name         String
+  urlName      String?             @map("url_name")
+  description  String
+  instagram    String
+  categoryId   String              @map("category_id")
+  active       Boolean             @default(true)
+  showcase     Boolean             @default(false)
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @default(now()) @map("updated_at")
+  deletedAt    DateTime?           @map("deleted_at")
+  collections  ProductCollection[]
+  images       ProductImage[]
+  category     Category            @relation(fields: [categoryId], references: [id])
+  userArtist   UserArtist          @relation(fields: [userArtistId], references: [id])
 
   @@map("products")
 }

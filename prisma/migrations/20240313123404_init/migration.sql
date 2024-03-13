@@ -3,11 +3,11 @@ CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "address" TEXT,
+    "phone" TEXT,
     "password" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "artist" BOOLEAN NOT NULL DEFAULT false,
     "admin" BOOLEAN NOT NULL DEFAULT false,
-    "image_id" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),
@@ -29,43 +29,32 @@ CREATE TABLE "user_collaborators" (
 );
 
 -- CreateTable
-CREATE TABLE "user_contacts" (
+CREATE TABLE "user_artists" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
-    "contact" TEXT NOT NULL,
-    "contact_type" TEXT NOT NULL,
+    "biography" TEXT NOT NULL,
+    "instagram" TEXT,
+    "email" TEXT,
+    "phone" TEXT,
+    "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),
 
-    CONSTRAINT "user_contacts_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "user_artists_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "user_addresses" (
+CREATE TABLE "user_artist_images" (
     "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "zip_code" TEXT NOT NULL,
-    "street" TEXT NOT NULL,
-    "number" TEXT NOT NULL,
-    "complement" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "deleted_at" TIMESTAMP(3),
-
-    CONSTRAINT "user_addresses_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "user_images" (
-    "id" TEXT NOT NULL,
+    "user_artist_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "path" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),
 
-    CONSTRAINT "user_images_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "user_artist_images_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -84,14 +73,14 @@ CREATE TABLE "categories" (
 -- CreateTable
 CREATE TABLE "products" (
     "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
+    "user_artist_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "url_name" TEXT,
     "description" TEXT NOT NULL,
     "instagram" TEXT NOT NULL,
     "category_id" TEXT NOT NULL,
-    "active" BOOLEAN NOT NULL,
-    "showcase" BOOLEAN NOT NULL,
+    "active" BOOLEAN NOT NULL DEFAULT true,
+    "showcase" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),
@@ -169,26 +158,20 @@ CREATE TABLE "publication_images" (
     CONSTRAINT "publication_images_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "users_image_id_key" ON "users"("image_id");
-
--- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_image_id_fkey" FOREIGN KEY ("image_id") REFERENCES "user_images"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
 -- AddForeignKey
 ALTER TABLE "user_collaborators" ADD CONSTRAINT "user_collaborators_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_contacts" ADD CONSTRAINT "user_contacts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_artists" ADD CONSTRAINT "user_artists_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_addresses" ADD CONSTRAINT "user_addresses_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_artist_images" ADD CONSTRAINT "user_artist_images_user_artist_id_fkey" FOREIGN KEY ("user_artist_id") REFERENCES "user_artists"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "products" ADD CONSTRAINT "products_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "products" ADD CONSTRAINT "products_user_artist_id_fkey" FOREIGN KEY ("user_artist_id") REFERENCES "user_artists"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "product_images" ADD CONSTRAINT "product_images_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
