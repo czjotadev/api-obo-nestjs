@@ -147,11 +147,11 @@ export class ArtistsService {
     files: Array<Express.Multer.File>,
   ): Promise<{ message: string }> {
     try {
-      const artist = await this.prismaClient.userArtist.findFirstOrThrow({
-        where: { id },
-      });
-
       const { userId, biography, email, phone, instagram } = updateArtistDto;
+
+      const artist = await this.prismaClient.userArtist.findFirstOrThrow({
+        where: { id, userId },
+      });
 
       await this.prismaClient.userArtist.update({
         data: {

@@ -60,8 +60,9 @@ export class PublicationsController {
   update(
     @Param('id') id: string,
     @Body() updatePublicationDto: UpdatePublicationDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    return this.publicationsService.update(id, updatePublicationDto);
+    return this.publicationsService.update(id, updatePublicationDto, files);
   }
 
   @UseGuards(AuthGuardAdmin)

@@ -1,4 +1,24 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreatePublicationDto } from './create-publication.dto';
+import { IsBoolean, IsString } from 'class-validator';
 
-export class UpdatePublicationDto extends PartialType(CreatePublicationDto) {}
+export class UpdatePublicationDto {
+  @IsString()
+  userId?: string;
+
+  @IsString()
+  title?: string;
+
+  @IsString()
+  caption?: string;
+
+  @IsString()
+  description?: string;
+
+  @IsString()
+  categoryId?: string;
+
+  @IsString()
+  instagram?: string;
+
+  @IsBoolean()
+  active?: boolean;
+}

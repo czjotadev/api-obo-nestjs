@@ -9,6 +9,18 @@ export class CollaboratorsService {
   async create(createCollaboratorDto: CreateCollaboratorDto) {
     try {
       const { userId, biography, active } = createCollaboratorDto;
+
+      const verifyCollaborator =
+        await this.prismaClient.userCollaborator.findFirst({
+          where: { userId },
+        });
+
+      if (verifyCollaborator) {
+        throw new Error(
+          'Erro ao cadastrar colaborador: Já existe um colaborador com os dados informados.',
+        );
+      }
+
       await this.prismaClient.userCollaborator.create({
         data: {
           userId,

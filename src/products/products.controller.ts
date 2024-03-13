@@ -9,6 +9,9 @@ import {
   UseInterceptors,
   UploadedFiles,
   UseGuards,
+  Query,
+  ParseBoolPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -17,6 +20,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AuthGuardAdmin } from 'src/auth/guard/adm-auth.guard';
+import { RemoveImagesProductDto } from './dto/remove-images-product.dto';
 
 const storage = diskStorage({
   destination: './upload/products/images',
@@ -42,13 +46,18 @@ export class ProductsController {
   }
 
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  findAll(
+    @Query('active', ParseBoolPipe) active: boolean,
+    @Query('showcase', ParseBoolPipe) showcase: boolean,
+    @Query('skip', ParseIntPipe) skip: number,
+    @Query('take', ParseIntPipe) take: number,
+  ) {
+    return this.productsService.findAll(active, showcase, skip, take);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+    return this.productsService.findOne(id);
   }
 
   // @UseGuards(AuthGuardAdmin)
@@ -60,6 +69,13 @@ export class ProductsController {
   @UseGuards(AuthGuardAdmin)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+    return this.productsService.remove(id);
+  }
+
+  @Delete('images')
+  async removeImages(@Body() removeImagesProductDto: RemoveImagesProductDto) {
+    return await this.productsService.removeImages(
+      removeImagesProductDto.files,
+    );
   }
 }
