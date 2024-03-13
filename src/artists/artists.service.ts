@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { PrismaClient } from '@prisma/client';
+import fs from 'fs';
+import { ArtistsInterface } from './interfaces/artists.interface';
 
 @Injectable()
 export class ArtistsService {
@@ -12,6 +14,16 @@ export class ArtistsService {
   ): Promise<{ message: string }> {
     try {
       const { userId, biography, instagram, email, phone } = createArtistDto;
+
+      const verifyArtist = await this.prismaClient.userArtist.findFirst({
+        where: { userId },
+      });
+
+      if (verifyArtist) {
+        throw new Error(
+          'Erro ao cadastrar artista: Já existe um usuário com os dados informados.',
+        );
+      }
 
       const artist = await this.prismaClient.userArtist.create({
         data: {
@@ -33,23 +45,206 @@ export class ArtistsService {
         });
       });
 
-      return { message: 'This action adds a new artist' };
-    } catch (error) {}
+      return { message: 'Artista cadastrado com sucesso' };
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Erro ao cadastrar artista.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all artists`;
+  async findAll(): Promise<ArtistsInterface[]> {
+    try {
+      const artists = await this.prismaClient.userArtist.findMany({
+        select: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          id: true,
+          email: true,
+          instagram: true,
+          biography: true,
+          phone: true,
+          createdAt: true,
+          updatedAt: true,
+          userArtistImage: {
+            select: {
+              id: true,
+              name: true,
+              path: true,
+            },
+            where: {
+              deletedAt: null,
+            },
+          },
+        },
+        where: {
+          deletedAt: null,
+          active: true,
+        },
+      });
+
+      return artists;
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Erro ao listar artistas.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} artist`;
+  async findOne(id: string): Promise<ArtistsInterface> {
+    try {
+      const artist = await this.prismaClient.userArtist.findFirstOrThrow({
+        select: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          id: true,
+          email: true,
+          instagram: true,
+          biography: true,
+          phone: true,
+          createdAt: true,
+          updatedAt: true,
+          userArtistImage: {
+            select: {
+              id: true,
+              name: true,
+              path: true,
+            },
+            where: {
+              deletedAt: null,
+            },
+          },
+        },
+        where: {
+          id,
+          deletedAt: null,
+          active: true,
+        },
+      });
+
+      return artist;
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Erro ao listar artistas.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  update(id: number, updateArtistDto: UpdateArtistDto) {
-    return `This action updates a #${id} ${updateArtistDto} artist`;
+  async update(
+    id: string,
+    updateArtistDto: UpdateArtistDto,
+    files: Array<Express.Multer.File>,
+  ): Promise<{ message: string }> {
+    try {
+      const artist = await this.prismaClient.userArtist.findFirstOrThrow({
+        where: { id },
+      });
+
+      const { userId, biography, email, phone, instagram } = updateArtistDto;
+
+      await this.prismaClient.userArtist.update({
+        data: {
+          userId,
+          biography,
+          email,
+          phone,
+          instagram,
+        },
+        where: { id },
+      });
+
+      files.map(async (file) => {
+        await this.prismaClient.userArtistImage.create({
+          data: {
+            name: file.filename,
+            path: file.path,
+            userArtistId: artist.id,
+          },
+        });
+      });
+      return { message: 'Artista atualizado com sucesso!' };
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Erro ao atualizar artista.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} artist`;
+  async remove(id: string): Promise<{ message: string }> {
+    try {
+      const artists = await this.prismaClient.userArtist.findFirstOrThrow({
+        where: {
+          id,
+          deletedAt: null,
+        },
+      });
+
+      const files = await this.prismaClient.userArtistImage.findMany({
+        where: {
+          userArtistId: artists.id,
+        },
+        select: {
+          id: true,
+          path: true,
+        },
+      });
+
+      await this.removeImages(files);
+
+      await this.prismaClient.userArtistImage.deleteMany({
+        where: {
+          userArtistId: artists.id,
+        },
+      });
+
+      await this.prismaClient.userArtist.update({
+        data: {
+          deletedAt: new Date(),
+        },
+        where: {
+          id,
+        },
+      });
+
+      return { message: 'Artista removido com sucesso!' };
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Erro ao remover artista.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async removeImages(files: { id: string; path?: string }[]) {
+    try {
+      files.map(async (file) => {
+        file.path
+          ? await this.prismaClient.userArtistImage.findFirstOrThrow({
+              where: { id: file.id },
+            })
+          : fs.unlink(file.path, (err) => {
+              if (err) {
+                throw new Error('Erro ao excluir os arquivos.');
+              }
+            });
+      });
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Erro ao remover imagem.' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

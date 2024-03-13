@@ -17,6 +17,8 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AuthGuardAdmin } from 'src/auth/guard/adm-auth.guard';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { ArtistsInterface } from './interfaces/artists.interface';
+import { RemoveImagesArtistDto } from './dto/remove-images-artist.dto';
 
 const storage = diskStorage({
   destination: './upload/artists/images',
@@ -34,30 +36,41 @@ export class ArtistsController {
   @UseGuards(AuthGuardAdmin)
   @Post()
   @UseInterceptors(FilesInterceptor('files', 10, { storage }))
-  create(
+  async create(
     @Body() createArtistDto: CreateArtistDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
-  ) {
+  ): Promise<{ message: string }> {
     return this.artistsService.create(createArtistDto, files);
   }
 
   @Get()
-  findAll() {
-    return this.artistsService.findAll();
+  async findAll(): Promise<ArtistsInterface[]> {
+    return await this.artistsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.artistsService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<ArtistsInterface> {
+    return await this.artistsService.findOne(id);
   }
 
+  @UseGuards(AuthGuardAdmin)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
-    return this.artistsService.update(+id, updateArtistDto);
+  @UseInterceptors(FilesInterceptor('files', 10, { storage }))
+  async update(
+    @Param('id') id: string,
+    @Body() updateArtistDto: UpdateArtistDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ): Promise<{ message: string }> {
+    return await this.artistsService.update(id, updateArtistDto, files);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.artistsService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.artistsService.remove(id);
+  }
+
+  @Delete('images')
+  async removeImages(@Body() removeImagesArtistDto: RemoveImagesArtistDto) {
+    return await this.artistsService.removeImages(removeImagesArtistDto.files);
   }
 }
