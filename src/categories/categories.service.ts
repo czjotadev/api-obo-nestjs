@@ -19,6 +19,7 @@ export class CategoriesService {
       },
       select: {
         id: true,
+      }
     });
 
     return { id: category.id, message: 'Cadastro realizado com sucesso' };
