@@ -21,7 +21,7 @@ export class CategoriesController {
   @Post()
   async create(
     @Body() createCategoryDto: CreateCategoryDto,
-  ): Promise<{ message: string }> {
+  ): Promise<{ id: string, message: string }> {
     return this.categoriesService.create(createCategoryDto);
   }
 
