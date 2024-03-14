@@ -11,15 +11,17 @@ export class CategoriesService {
   ): Promise<{ message: string }> {
     const { description, active, title } = createCategoryDto;
 
-    await this.prismaClient.category.create({
+    const category = await this.prismaClient.category.create({
       data: {
         title,
         description,
         active,
       },
+      select: {
+        id: true,
     });
 
-    return { message: 'Cadastro realizado com sucesso' };
+    return { id: category.id, message: 'Cadastro realizado com sucesso' };
   }
 
   async findAll(): Promise<any> {
