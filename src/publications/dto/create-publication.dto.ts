@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreatePublicationDto {
   @IsNotEmpty()
@@ -14,7 +14,7 @@ export class CreatePublicationDto {
   description: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   categoryId: string;
 
   @IsString()
