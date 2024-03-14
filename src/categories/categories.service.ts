@@ -8,7 +8,7 @@ export class CategoriesService {
   constructor(private prismaClient: PrismaClient) {}
   async create(
     createCategoryDto: CreateCategoryDto,
-  ): Promise<{ message: string }> {
+  ): Promise<{ id: string, message: string }> {
     const { description, active, title } = createCategoryDto;
 
     const category = await this.prismaClient.category.create({
