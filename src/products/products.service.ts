@@ -55,12 +55,7 @@ export class ProductsService {
     }
   }
 
-  async findAll(
-    active: boolean,
-    showcase: boolean,
-    skip: number,
-    take: number,
-  ) {
+  async findAll(active: boolean, showcase: boolean) {
     try {
       const products = await this.prismaClient.product.findMany({
         where: {
@@ -78,10 +73,15 @@ export class ProductsService {
               description: true,
             },
           },
+          productImages: {
+            select: {
+              name: true,
+              path: true,
+            },
+          },
           createdAt: true,
+          updatedAt: true,
         },
-        skip,
-        take,
       });
       return products;
     } catch (error) {

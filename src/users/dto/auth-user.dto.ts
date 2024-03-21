@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class AuthUserDto {
   @IsNotEmpty()
   @IsEmail()
@@ -8,4 +8,8 @@ export class AuthUserDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @IsBoolean()
+  @IsOptional()
+  admin?: boolean;
 }

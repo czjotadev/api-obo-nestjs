@@ -73,7 +73,7 @@ export class UsersService {
 
   async find(authUserDto: AuthUserDto): Promise<UserDto | undefined> {
     try {
-      const { email, password } = authUserDto;
+      const { email, password, admin } = authUserDto;
       const user = await this.prismaClient.user.findFirst({
         where: {
           email,
@@ -94,6 +94,8 @@ export class UsersService {
       const verifyPassword = await bcrypt.compare(password, user.password);
 
       if (!verifyPassword) throw new UnauthorizedException();
+
+      if (admin && !user.admin) throw new UnauthorizedException();
 
       delete user.password;
 

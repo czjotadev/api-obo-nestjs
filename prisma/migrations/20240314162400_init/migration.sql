@@ -94,7 +94,6 @@ CREATE TABLE "product_images" (
     "product_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "path" TEXT NOT NULL,
-    "extension" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted_at" TIMESTAMP(3),

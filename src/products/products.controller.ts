@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
   Param,
   Delete,
   UseInterceptors,
@@ -11,7 +10,6 @@ import {
   UseGuards,
   Query,
   ParseBoolPipe,
-  ParseIntPipe,
   Patch,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
@@ -50,10 +48,8 @@ export class ProductsController {
   findAll(
     @Query('active', ParseBoolPipe) active: boolean,
     @Query('showcase', ParseBoolPipe) showcase: boolean,
-    @Query('skip', ParseIntPipe) skip: number,
-    @Query('take', ParseIntPipe) take: number,
   ) {
-    return this.productsService.findAll(active, showcase, skip, take);
+    return this.productsService.findAll(active, showcase);
   }
 
   @Get(':id')

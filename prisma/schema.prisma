@@ -21,8 +21,8 @@ model User {
   deletedAt        DateTime?           @map("deleted_at")
   collections      ProductCollection[]
   publications     Publication[]
-  UserCollaborator UserCollaborator[]
   UserArtist       UserArtist[]
+  UserCollaborator UserCollaborator[]
 
   @@map("users")
 }
@@ -35,79 +35,75 @@ model UserCollaborator {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @default(now()) @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-
-  user User @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
 
   @@map("user_collaborators")
 }
 
 model UserArtist {
-  id        String    @id @default(uuid())
-  userId    String    @map("user_id")
-  biography String
-  instagram String?
-  email     String?
-  phone     String?
-  active    Boolean   @default(true)
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  user User @relation(fields: [userId], references: [id])
-
-  userArtistImage UserArtistImage[]
+  id              String            @id @default(uuid())
+  userId          String            @map("user_id")
+  biography       String
+  instagram       String?
+  email           String?
+  phone           String?
+  active          Boolean           @default(true)
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @default(now()) @map("updated_at")
+  deletedAt       DateTime?         @map("deleted_at")
   Product         Product[]
+  userArtistImage UserArtistImage[]
+  user            User              @relation(fields: [userId], references: [id])
 
   @@map("user_artists")
 }
 
 model UserArtistImage {
-  id           String    @id @default(uuid())
-  userArtistId String    @map("user_artist_id")
+  id           String     @id @default(uuid())
+  userArtistId String     @map("user_artist_id")
   name         String
   path         String
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @default(now()) @map("updated_at")
-  deletedAt    DateTime? @map("deleted_at")
-
-  userArtist UserArtist @relation(fields: [userArtistId], references: [id])
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @default(now()) @map("updated_at")
+  deletedAt    DateTime?  @map("deleted_at")
+  userArtist   UserArtist @relation(fields: [userArtistId], references: [id])
 
   @@map("user_artist_images")
 }
 
-model Category {
-  id           String        @id @default(uuid())
-  title        String        @default("category")
-  description  String
-  active       Boolean       @default(true)
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @default(now()) @map("updated_at")
-  deletedAt    DateTime?     @map("deleted_at")
-  produts      Product[]
-  publications Publication[]
-
-  @@map("categories")
-}
-
 model Product {
-  id           String              @id @default(uuid())
-  userArtistId String              @map("user_artist_id")
-  name         String
-  urlName      String?             @map("url_name")
-  description  String
-  instagram    String
-  categoryId   String              @map("category_id")
-  active       Boolean             @default(true)
-  showcase     Boolean             @default(false)
-  createdAt    DateTime            @default(now()) @map("created_at")
-  updatedAt    DateTime            @default(now()) @map("updated_at")
-  deletedAt    DateTime?           @map("deleted_at")
-  collections  ProductCollection[]
-  images       ProductImage[]
-  category     Category            @relation(fields: [categoryId], references: [id])
-  userArtist   UserArtist          @relation(fields: [userArtistId], references: [id])
+  id                    String              @id @default(uuid())
+  userArtistId          String              @map("user_artist_id")
+  name                  String
+  urlName               String?             @map("url_name")
+  description           String
+  instagram             String
+  productCategoryId     String              @map("product_category_id")
+  active                Boolean             @default(true)
+  showcase              Boolean             @default(false)
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @default(now()) @map("updated_at")
+  deletedAt             DateTime?           @map("deleted_at")
+  ProductCollections    ProductCollection[]
+  productImages         ProductImage[]
+  productCategories     ProductCategory     @relation(fields: [productCategoryId], references: [id])
+  userArtists           UserArtist          @relation(fields: [userArtistId], references: [id])
+  publicationCategoryId String?
 
   @@map("products")
+}
+
+model ProductCategory {
+  id          String    @id @default(uuid())
+  title       String    @default("category")
+  description String
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  produts     Product[]
+
+  @@map("product_categories")
 }
 
 model ProductImage {
@@ -124,50 +120,63 @@ model ProductImage {
 }
 
 model ProductCollection {
-  id                 String           @id @default(uuid())
-  userId             String           @map("user_id")
-  productId          String           @map("product_id")
-  collectionStatusId String           @map("collection_status_id")
-  createdAt          DateTime         @default(now()) @map("created_at")
-  updatedAt          DateTime         @default(now()) @map("updated_at")
-  deletedAt          DateTime?        @map("deleted_at")
-  status             CollectionStatus @relation(fields: [collectionStatusId], references: [id])
-  product            Product          @relation(fields: [productId], references: [id])
-  user               User             @relation(fields: [userId], references: [id])
+  id                        String                  @id @default(uuid())
+  userId                    String                  @map("user_id")
+  productId                 String                  @map("product_id")
+  productCollectionStatusId String                  @map("product_collection_status_id")
+  createdAt                 DateTime                @default(now()) @map("created_at")
+  updatedAt                 DateTime                @default(now()) @map("updated_at")
+  deletedAt                 DateTime?               @map("deleted_at")
+  productCollectionStatus   ProductCollectionStatus @relation(fields: [productCollectionStatusId], references: [id])
+  product                   Product                 @relation(fields: [productId], references: [id])
+  user                      User                    @relation(fields: [userId], references: [id])
 
   @@map("product_collections")
 }
 
-model CollectionStatus {
-  id          String              @id @default(uuid())
-  description String              @map("description")
-  active      Boolean             @default(true)
-  createdAt   DateTime            @default(now()) @map("created_at")
-  updatedAt   DateTime            @default(now()) @map("updated_at")
-  deletedAt   DateTime?           @map("deleted_at")
-  collection  ProductCollection[]
+model ProductCollectionStatus {
+  id                String              @id @default(uuid())
+  description       String              @map("description")
+  active            Boolean             @default(true)
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @default(now()) @map("updated_at")
+  deletedAt         DateTime?           @map("deleted_at")
+  productCollection ProductCollection[]
 
-  @@map("collection_status")
+  @@map("product_collection_status")
 }
 
 model Publication {
-  id          String             @id @default(uuid())
-  userId      String             @map("user_id")
-  title       String
-  caption     String
-  description String
-  categoryId  String             @map("category_id")
-  instagram   String?
-  active      Boolean            @default(true)
-  showcase    Boolean            @default(false)
-  createdAt   DateTime           @default(now()) @map("created_at")
-  updatedAt   DateTime           @default(now()) @map("updated_at")
-  deletedAt   DateTime?          @map("deleted_at")
-  images      PublicationImage[]
-  category    Category           @relation(fields: [categoryId], references: [id])
-  user        User               @relation(fields: [userId], references: [id])
+  id                    String              @id @default(uuid())
+  userId                String              @map("user_id")
+  title                 String
+  caption               String
+  description           String
+  publicationCategoryId String              @map("publication_category_id")
+  instagram             String?
+  active                Boolean             @default(true)
+  showcase              Boolean             @default(false)
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @default(now()) @map("updated_at")
+  deletedAt             DateTime?           @map("deleted_at")
+  publicationImages     PublicationImage[]
+  publicationCategory   PublicationCategory @relation(fields: [publicationCategoryId], references: [id])
+  user                  User                @relation(fields: [userId], references: [id])
 
   @@map("publications")
+}
+
+model PublicationCategory {
+  id          String        @id @default(uuid())
+  title       String        @default("category")
+  description String
+  active      Boolean       @default(true)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @default(now()) @map("updated_at")
+  deletedAt   DateTime?     @map("deleted_at")
+  Publication Publication[]
+
+  @@map("publication_categories")
 }
 
 model PublicationImage {
