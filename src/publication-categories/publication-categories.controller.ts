@@ -13,7 +13,7 @@ import { CreatePublicationCategoryDto } from './dto/create-publication-category.
 import { UpdatePublicationCategoryDto } from './dto/update-publication-category.dto';
 import { AuthGuardAdmin } from 'src/auth/guard/adm-auth.guard';
 
-@Controller('categories')
+@Controller('publication-categories')
 export class PublicationCategoriesController {
   constructor(
     private readonly publicationCategoriesService: PublicationCategoriesService,
