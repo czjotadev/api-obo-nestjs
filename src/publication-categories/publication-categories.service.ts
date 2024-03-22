@@ -1,17 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CreatePublicationCategoryDto } from './dto/create-publication-category.dto';
+import { UpdatePublicationCategoryDto } from './dto/update-publication-category.dto';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
-export class CategoriesService {
+export class PublicationCategoriesService {
   constructor(private prismaClient: PrismaClient) {}
   async create(
-    createCategoryDto: CreateCategoryDto,
-  ): Promise<{ id: string, message: string }> {
-    const { description, active, title } = createCategoryDto;
+    createPublicationCategoryDto: CreatePublicationCategoryDto,
+  ): Promise<{ id: string; message: string }> {
+    const { description, active, title } = createPublicationCategoryDto;
 
-    const category = await this.prismaClient.category.create({
+    const category = await this.prismaClient.publicationCategory.create({
       data: {
         title,
         description,
@@ -19,7 +19,7 @@ export class CategoriesService {
       },
       select: {
         id: true,
-      }
+      },
     });
 
     return { id: category.id, message: 'Cadastro realizado com sucesso' };
@@ -27,7 +27,7 @@ export class CategoriesService {
 
   async findAll(): Promise<any> {
     try {
-      const categories = await this.prismaClient.category.findMany({
+      const categories = await this.prismaClient.publicationCategory.findMany({
         select: {
           id: true,
           description: true,
@@ -49,18 +49,19 @@ export class CategoriesService {
 
   async findOne(id: string) {
     try {
-      const category = await this.prismaClient.category.findFirstOrThrow({
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          active: true,
-        },
-        where: {
-          id,
-          deletedAt: null,
-        },
-      });
+      const category =
+        await this.prismaClient.publicationCategory.findFirstOrThrow({
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            active: true,
+          },
+          where: {
+            id,
+            deletedAt: null,
+          },
+        });
       return category;
     } catch (error) {
       throw new HttpException(
@@ -70,11 +71,11 @@ export class CategoriesService {
     }
   }
 
-  async update(id, updateCategoryDto: UpdateCategoryDto) {
+  async update(id, updatePublicationCategoryDto: UpdatePublicationCategoryDto) {
     try {
-      const { title, description, active } = updateCategoryDto;
+      const { title, description, active } = updatePublicationCategoryDto;
 
-      await this.prismaClient.category.update({
+      await this.prismaClient.publicationCategory.update({
         data: {
           title,
           description,
@@ -98,7 +99,7 @@ export class CategoriesService {
 
   async remove(id: string) {
     try {
-      await this.prismaClient.category.update({
+      await this.prismaClient.publicationCategory.update({
         data: {
           deletedAt: new Date(),
         },

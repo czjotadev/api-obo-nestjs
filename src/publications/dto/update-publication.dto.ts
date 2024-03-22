@@ -19,7 +19,7 @@ export class UpdatePublicationDto {
 
   @IsOptional()
   @IsString()
-  categoryId?: string;
+  publicationCategoryId?: string;
 
   @IsOptional()
   @IsString()

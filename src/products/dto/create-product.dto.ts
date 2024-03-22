@@ -4,7 +4,7 @@ export class CreateProductDto {
   urlName?: string;
   description: string;
   instagram: string;
-  categoryId: string;
+  productCategoryId: string;
   active: string;
   showcase: string;
 }

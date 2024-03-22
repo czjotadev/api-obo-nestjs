@@ -13,7 +13,7 @@ export class PublicationsService {
     createPublicationDto: CreatePublicationDto,
     files: Array<Express.Multer.File>,
   ): Promise<{ message: string }> {
-    const { title, caption, description, categoryId, instagram } =
+    const { title, caption, description, publicationCategoryId, instagram } =
       createPublicationDto;
 
     const publication = await this.prismaClient.publication.create({
@@ -22,7 +22,7 @@ export class PublicationsService {
         title,
         caption,
         description,
-        categoryId,
+        publicationCategoryId,
         instagram,
       },
     });
@@ -53,7 +53,7 @@ export class PublicationsService {
             email: true,
           },
         },
-        images: {
+        publicationImages: {
           select: {
             path: true,
           },
@@ -61,7 +61,7 @@ export class PublicationsService {
         title: true,
         caption: true,
         description: true,
-        category: {
+        publicationCategory: {
           select: {
             title: true,
           },
@@ -87,7 +87,7 @@ export class PublicationsService {
             email: true,
           },
         },
-        images: {
+        publicationImages: {
           select: {
             path: true,
           },
@@ -95,7 +95,7 @@ export class PublicationsService {
         title: true,
         caption: true,
         description: true,
-        category: {
+        publicationCategory: {
           select: {
             title: true,
           },
@@ -119,7 +119,7 @@ export class PublicationsService {
         title,
         caption,
         description,
-        categoryId,
+        publicationCategoryId,
         instagram,
         active,
       } = updatePublicationDto;
@@ -134,7 +134,7 @@ export class PublicationsService {
           title,
           caption,
           description,
-          categoryId,
+          publicationCategoryId,
           instagram,
           active,
         },
@@ -208,13 +208,13 @@ export class PublicationsService {
     try {
       files.map(async (file) => {
         file.path
-          ? await this.prismaClient.publicationImage.findFirstOrThrow({
-              where: { id: file.id },
-            })
-          : fs.unlink(file.path, (err) => {
+          ? fs.unlink(file.path, (err) => {
               if (err) {
                 throw new Error('Erro ao excluir os arquivos.');
               }
+            })
+          : await this.prismaClient.publicationImage.findFirstOrThrow({
+              where: { id: file.id },
             });
       });
     } catch (error) {

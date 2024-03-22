@@ -14,7 +14,7 @@ export class UpdateProductDto {
   instagram?: string;
 
   @IsString()
-  categoryId?: string;
+  productCategoryId?: string;
 
   @IsBoolean()
   active?: boolean;

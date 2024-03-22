@@ -15,7 +15,7 @@ export class CreatePublicationDto {
 
   @IsNotEmpty()
   @IsString()
-  categoryId: string;
+  publicationCategoryId: string;
 
   @IsOptional()
   @IsString()

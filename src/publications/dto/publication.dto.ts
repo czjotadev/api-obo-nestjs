@@ -9,7 +9,7 @@ export class PublicationDto {
   @IsString()
   user: any;
 
-  images: any;
+  publicationImages: any;
 
   @IsNotEmpty()
   @IsString()
@@ -25,7 +25,7 @@ export class PublicationDto {
 
   @IsNotEmpty()
   @IsNumber()
-  category: any;
+  publicationCategory: any;
 
   @IsString()
   instagram?: string;

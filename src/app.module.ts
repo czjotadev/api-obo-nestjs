@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { ProductCategoriesModule } from './product-categories/product-categories.module';
 import { ProductsModule } from './products/products.module';
 import { UsersModule } from './users/users.module';
-import { CategoriesModule } from './categories/categories.module';
+import { PublicationCategoriesModule } from './publication-categories/publication-categories.module';
 import { PublicationsModule } from './publications/publications.module';
 import { CollaboratorsModule } from './collaborators/collaborators.module';
 import { CollectionsModule } from './collections/collections.module';
@@ -17,9 +18,10 @@ import { ArtistsModule } from './artists/artists.module';
       rootPath: join(__dirname, '..', 'upload'),
       serveRoot: '/upload',
     }),
-    ProductsModule,
     UsersModule,
-    CategoriesModule,
+    ProductsModule,
+    ProductCategoriesModule,
+    PublicationCategoriesModule,
     PublicationsModule,
     CollaboratorsModule,
     CollectionsModule,

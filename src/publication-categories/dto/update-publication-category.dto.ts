@@ -1,6 +1,6 @@
 import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateCategoryDto {
+export class UpdatePublicationCategoryDto {
   @IsString()
   @IsNotEmpty()
   title?: string;

@@ -18,7 +18,7 @@ export class ProductsService {
         urlName,
         description,
         instagram,
-        categoryId,
+        productCategoryId,
         showcase,
         active,
       } = createProductDto;
@@ -30,7 +30,7 @@ export class ProductsService {
           urlName,
           description,
           instagram,
-          categoryId,
+          productCategoryId,
           showcase: showcase === 'true' ? true : false,
           active: active === 'true' ? true : false,
         },
@@ -67,7 +67,7 @@ export class ProductsService {
           id: true,
           name: true,
           description: true,
-          category: {
+          productCategories: {
             select: {
               id: true,
               description: true,
@@ -105,13 +105,13 @@ export class ProductsService {
           description: true,
           instagram: true,
           active: true,
-          category: {
+          productCategories: {
             select: {
               id: true,
               description: true,
             },
           },
-          userArtist: {
+          userArtists: {
             select: {
               id: true,
               biography: true,
@@ -148,7 +148,7 @@ export class ProductsService {
         urlName,
         description,
         instagram,
-        categoryId,
+        productCategoryId,
         showcase,
         active,
       } = updateProductDto;
@@ -163,7 +163,7 @@ export class ProductsService {
           urlName,
           description,
           instagram,
-          categoryId,
+          productCategoryId,
           showcase,
           active,
         },
@@ -237,13 +237,13 @@ export class ProductsService {
     try {
       files.map(async (file) => {
         file.path
-          ? await this.prismaClient.productImage.findFirstOrThrow({
-              where: { id: file.id },
-            })
-          : fs.unlink(file.path, (err) => {
+          ? fs.unlink(file.path, (err) => {
               if (err) {
                 throw new Error('Erro ao excluir os arquivos.');
               }
+            })
+          : await this.prismaClient.productImage.findFirstOrThrow({
+              where: { id: file.id },
             });
       });
     } catch (error) {
