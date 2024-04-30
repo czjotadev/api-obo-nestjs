@@ -41,38 +41,42 @@ export class PublicationsService {
   }
 
   async findAll(): Promise<PublicationDto[] | undefined> {
-    const publication = this.prismaClient.publication.findMany({
-      where: {
-        active: true,
-      },
-      select: {
-        id: true,
-        deletedAt: null,
-        user: {
-          select: {
-            name: true,
-            email: true,
-          },
+    try {
+      const publication = this.prismaClient.publication.findMany({
+        where: {
+          active: true,
+          deletedAt: null,
         },
-        publicationImages: {
-          select: {
-            path: true,
+        select: {
+          id: true,
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
           },
-        },
-        title: true,
-        caption: true,
-        description: true,
-        publicationCategory: {
-          select: {
-            title: true,
+          publicationImages: {
+            select: {
+              path: true,
+            },
           },
+          title: true,
+          caption: true,
+          description: true,
+          publicationCategory: {
+            select: {
+              title: true,
+            },
+          },
+          instagram: true,
+          createdAt: true,
+          updatedAt: true,
         },
-        instagram: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-    return publication;
+      });
+      return publication;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async findOne(id: string): Promise<PublicationDto | undefined> {
