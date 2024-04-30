@@ -47,7 +47,7 @@ export class PublicationsService {
       },
       select: {
         id: true,
-        deleted_at: null,
+        deletedAt: null,
         user: {
           select: {
             name: true,
