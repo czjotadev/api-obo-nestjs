@@ -16,7 +16,7 @@ export class ArtistsService {
       const { userId, biography, instagram, email, phone } = createArtistDto;
 
       const verifyArtist = await this.prismaClient.userArtist.findFirst({
-        where: { userId },
+        where: { userId, deletedAt: null },
       });
 
       if (verifyArtist) {
