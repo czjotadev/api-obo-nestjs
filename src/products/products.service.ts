@@ -27,7 +27,7 @@ export class ProductsService {
         data: {
           userArtistId,
           name,
-          price,
+          price: Number(price),
           urlName,
           description,
           productCategoryId,
@@ -48,6 +48,7 @@ export class ProductsService {
 
       return { message: 'Cadastro realizado com sucesso!' };
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         { message: 'Não foi possível cadastrar o produto.' },
         HttpStatus.BAD_REQUEST,
