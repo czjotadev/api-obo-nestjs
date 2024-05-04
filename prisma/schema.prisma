@@ -77,7 +77,6 @@ model Product {
   name                  String
   urlName               String?             @map("url_name")
   description           String
-  instagram             String
   productCategoryId     String              @map("product_category_id")
   active                Boolean             @default(true)
   showcase              Boolean             @default(false)
