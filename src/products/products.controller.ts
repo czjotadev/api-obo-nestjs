@@ -9,7 +9,6 @@ import {
   UploadedFiles,
   UseGuards,
   Query,
-  ParseBoolPipe,
   Patch,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
@@ -46,10 +45,13 @@ export class ProductsController {
 
   @Get()
   findAll(
-    @Query('active', ParseBoolPipe) active: boolean,
-    @Query('showcase', ParseBoolPipe) showcase: boolean,
+    @Query('active') active?: boolean,
+    @Query('showcase') showcase?: boolean,
   ) {
-    return this.productsService.findAll(active, showcase);
+    return this.productsService.findAll(
+      active ? true : undefined,
+      showcase ? true : undefined,
+    );
   }
 
   @Get(':id')

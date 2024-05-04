@@ -53,12 +53,13 @@ export class ProductsService {
     }
   }
 
-  async findAll(active: boolean, showcase: boolean) {
+  async findAll(active?: boolean, showcase?: boolean) {
     try {
+      console.log(typeof active, showcase);
       const products = await this.prismaClient.product.findMany({
         where: {
-          active,
-          showcase,
+          active: active == true ? true : undefined,
+          showcase: showcase == true ? true : undefined,
           deletedAt: null,
         },
         select: {
