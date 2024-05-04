@@ -15,6 +15,7 @@ export class ProductsService {
       const {
         userArtistId,
         name,
+        price,
         urlName,
         description,
         productCategoryId,
@@ -26,6 +27,7 @@ export class ProductsService {
         data: {
           userArtistId,
           name,
+          price,
           urlName,
           description,
           productCategoryId,
@@ -65,6 +67,7 @@ export class ProductsService {
         select: {
           id: true,
           name: true,
+          price: true,
           description: true,
           productCategories: {
             select: {
@@ -101,6 +104,7 @@ export class ProductsService {
         select: {
           id: true,
           name: true,
+          price: true,
           description: true,
           active: true,
           productCategories: {
@@ -143,6 +147,7 @@ export class ProductsService {
     try {
       const {
         name,
+        price,
         urlName,
         description,
         productCategoryId,
@@ -157,6 +162,7 @@ export class ProductsService {
       await this.prismaClient.product.update({
         data: {
           name,
+          price,
           urlName,
           description,
           productCategoryId,

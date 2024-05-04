@@ -75,6 +75,7 @@ model Product {
   id                    String              @id @default(uuid())
   userArtistId          String              @map("user_artist_id")
   name                  String
+  price                 Float?
   urlName               String?             @map("url_name")
   description           String
   productCategoryId     String              @map("product_category_id")
