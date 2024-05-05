@@ -70,9 +70,12 @@ export class ProductsService {
           name: true,
           price: true,
           description: true,
+          showcase: true,
+          active: true,
           productCategories: {
             select: {
               id: true,
+              title: true,
               description: true,
             },
           },
@@ -107,10 +110,12 @@ export class ProductsService {
           name: true,
           price: true,
           description: true,
+          showcase: true,
           active: true,
           productCategories: {
             select: {
               id: true,
+              title: true,
               description: true,
             },
           },
