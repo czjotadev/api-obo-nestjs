@@ -172,8 +172,8 @@ export class ProductsService {
           urlName,
           description,
           productCategoryId,
-          showcase === 'true' ? true : false,
-          active === 'true' ? true : false,
+          showcase: showcase === 'true' ? true : false,
+          active: active === 'true' ? true : false,
         },
         where: { id },
       });
