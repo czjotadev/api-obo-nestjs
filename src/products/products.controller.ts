@@ -60,6 +60,7 @@ export class ProductsController {
   }
 
   @UseGuards(AuthGuardAdmin)
+  @UseInterceptors(FilesInterceptor('files', 10, { storage }))
   @Patch(':id')
   update(
     @Param('id') id: string,

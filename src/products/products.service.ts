@@ -36,19 +36,19 @@ export class ProductsService {
         },
       });
 
-      files.map(async (file) => {
-        await this.prismaClient.productImage.create({
-          data: {
-            name: file.filename,
-            path: file.path,
-            productId: product.id,
-          },
+      if (files && files.length > 0)
+        files.map(async (file) => {
+          await this.prismaClient.productImage.create({
+            data: {
+              name: file.filename,
+              path: file.path,
+              productId: product.id,
+            },
+          });
         });
-      });
 
       return { message: 'Cadastro realizado com sucesso!' };
     } catch (error) {
-      console.log(error);
       throw new HttpException(
         { message: 'Não foi possível cadastrar o produto.' },
         HttpStatus.BAD_REQUEST,
@@ -58,7 +58,6 @@ export class ProductsService {
 
   async findAll(active?: boolean, showcase?: boolean) {
     try {
-      console.log(typeof active, showcase);
       const products = await this.prismaClient.product.findMany({
         where: {
           active: active == true ? true : undefined,
@@ -168,7 +167,7 @@ export class ProductsService {
       await this.prismaClient.product.update({
         data: {
           name,
-          price,
+          price: price ? Number(price) : undefined,
           urlName,
           description,
           productCategoryId,
@@ -178,15 +177,16 @@ export class ProductsService {
         where: { id },
       });
 
-      files.map(async (file) => {
-        await this.prismaClient.productImage.create({
-          data: {
-            name: file.filename,
-            path: file.path,
-            productId: product.id,
-          },
+      if (files && files.length > 0)
+        files.map(async (file) => {
+          await this.prismaClient.productImage.create({
+            data: {
+              name: file.filename,
+              path: file.path,
+              productId: product.id,
+            },
+          });
         });
-      });
       return { message: 'Produto atualizado com sucesso!' };
     } catch (error) {
       throw new HttpException(
