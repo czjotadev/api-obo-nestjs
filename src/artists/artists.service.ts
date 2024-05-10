@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { PrismaClient } from '@prisma/client';
-import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 import { ArtistsInterface } from './interfaces/artists.interface';
 
 @Injectable()
@@ -147,15 +147,14 @@ export class ArtistsService {
     files: Array<Express.Multer.File>,
   ): Promise<{ message: string }> {
     try {
-      const { userId, biography, email, phone, instagram } = updateArtistDto;
+      const { biography, email, phone, instagram } = updateArtistDto;
 
       const artist = await this.prismaClient.userArtist.findFirstOrThrow({
-        where: { id, userId },
+        where: { id },
       });
 
       await this.prismaClient.userArtist.update({
         data: {
-          userId,
           biography,
           email,
           phone,
@@ -164,15 +163,18 @@ export class ArtistsService {
         where: { id },
       });
 
-      files.map(async (file) => {
-        await this.prismaClient.userArtistImage.create({
-          data: {
-            name: file.filename,
-            path: file.path,
-            userArtistId: artist.id,
-          },
+      if (files) {
+        files.map(async (file) => {
+          await this.prismaClient.userArtistImage.create({
+            data: {
+              name: file.filename,
+              path: file.path,
+              userArtistId: artist.id,
+            },
+          });
         });
-      });
+      }
+
       return { message: 'Artista atualizado com sucesso!' };
     } catch (error) {
       throw new HttpException(
@@ -230,15 +232,7 @@ export class ArtistsService {
   async removeImages(files: { id: string; path?: string }[]) {
     try {
       files.map(async (file) => {
-        file.path
-          ? await this.prismaClient.userArtistImage.findFirstOrThrow({
-              where: { id: file.id },
-            })
-          : fs.unlink(file.path, (err) => {
-              if (err) {
-                throw new Error('Erro ao excluir os arquivos.');
-              }
-            });
+        fsPromises.unlink(file.path);
       });
     } catch (error) {
       throw new HttpException(

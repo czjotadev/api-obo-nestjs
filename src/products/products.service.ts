@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '@prisma/client';
-import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 
 @Injectable()
 export class ProductsService {
@@ -171,8 +171,8 @@ export class ProductsService {
           urlName,
           description,
           productCategoryId,
-          showcase: showcase === 'true' ? true : false,
-          active: active === 'true' ? true : false,
+          showcase: this.verifyStringBoolean(showcase),
+          active: this.verifyStringBoolean(active),
         },
         where: { id },
       });
@@ -215,13 +215,20 @@ export class ProductsService {
         },
       });
 
-      await this.removeImages(files);
+      if (files) await this.removeImages(files);
 
-      await this.prismaClient.productImage.deleteMany({
-        where: {
-          productId: product.id,
-        },
-      });
+      await Promise.all(
+        files.map(async (file) => {
+          await this.prismaClient.productImage.update({
+            where: {
+              id: file.id,
+            },
+            data: {
+              deletedAt: new Date(),
+            },
+          });
+        }),
+      );
 
       await this.prismaClient.product.update({
         data: {
@@ -244,15 +251,15 @@ export class ProductsService {
   async removeImages(files: { id: string; path?: string }[]) {
     try {
       files.map(async (file) => {
-        file.path
-          ? fs.unlink(file.path, (err) => {
-              if (err) {
-                throw new Error('Erro ao excluir os arquivos.');
-              }
-            })
-          : await this.prismaClient.productImage.findFirstOrThrow({
-              where: { id: file.id },
-            });
+        fsPromises.unlink(file.path);
+        await this.prismaClient.productImage.update({
+          where: {
+            id: file.id,
+          },
+          data: {
+            deletedAt: new Date(),
+          },
+        });
       });
     } catch (error) {
       throw new HttpException(
@@ -260,5 +267,13 @@ export class ProductsService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  private verifyStringBoolean(value: any): boolean | undefined {
+    return value && typeof value === 'string'
+      ? value === 'true'
+        ? true
+        : false
+      : undefined;
   }
 }
