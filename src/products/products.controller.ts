@@ -47,10 +47,12 @@ export class ProductsController {
   findAll(
     @Query('active') active?: boolean,
     @Query('showcase') showcase?: boolean,
+    @Query('userArtistId') userArtistId?: string,
   ) {
     return this.productsService.findAll(
       active ? true : undefined,
       showcase ? true : undefined,
+      userArtistId,
     );
   }
 

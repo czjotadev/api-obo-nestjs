@@ -3,7 +3,7 @@ import { CreatePublicationDto } from './dto/create-publication.dto';
 import { UpdatePublicationDto } from './dto/update-publication.dto';
 import { PrismaClient } from '@prisma/client';
 import { PublicationDto } from './dto/publication.dto';
-import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 
 @Injectable()
 export class PublicationsService {
@@ -200,10 +200,10 @@ export class PublicationsService {
         },
       });
 
-      return { message: 'Produto removido com sucesso!' };
+      return { message: 'Publicação removido com sucesso!' };
     } catch (error) {
       throw new HttpException(
-        { message: 'Erro ao remover produto.' },
+        { message: 'Erro ao remover Publicação.' },
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -212,15 +212,7 @@ export class PublicationsService {
   async removeImages(files: { id: string; path?: string }[]) {
     try {
       files.map(async (file) => {
-        file.path
-          ? fs.unlink(file.path, (err) => {
-              if (err) {
-                throw new Error('Erro ao excluir os arquivos.');
-              }
-            })
-          : await this.prismaClient.publicationImage.findFirstOrThrow({
-              where: { id: file.id },
-            });
+        fsPromises.unlink(file.path);
       });
     } catch (error) {
       throw new HttpException(

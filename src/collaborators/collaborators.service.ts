@@ -54,6 +54,7 @@ export class CollaboratorsService {
               email: true,
             },
           },
+          active: true,
           biography: true,
         },
       });

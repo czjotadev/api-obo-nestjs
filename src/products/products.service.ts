@@ -56,10 +56,11 @@ export class ProductsService {
     }
   }
 
-  async findAll(active?: boolean, showcase?: boolean) {
+  async findAll(active?: boolean, showcase?: boolean, userArtistId?: string) {
     try {
       const products = await this.prismaClient.product.findMany({
         where: {
+          userArtistId,
           active: active == true ? true : undefined,
           showcase: showcase == true ? true : undefined,
           deletedAt: null,
