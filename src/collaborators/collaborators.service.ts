@@ -38,11 +38,11 @@ export class CollaboratorsService {
     }
   }
 
-  async findAll() {
+  async findAll(active?: boolean) {
     try {
       const colaborators = await this.prismaClient.userCollaborator.findMany({
         where: {
-          active: true,
+          active: active == true ? true : undefined,
           deletedAt: null,
         },
         select: {
@@ -86,7 +86,6 @@ export class CollaboratorsService {
               },
             },
             biography: true,
-            active: true,
           },
         });
       return collaborator;

@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CollaboratorsService } from './collaborators.service';
 import { CreateCollaboratorDto } from './dto/create-collaborator.dto';
@@ -24,8 +25,8 @@ export class CollaboratorsController {
   }
 
   @Get()
-  async findAll() {
-    return await this.collaboratorsService.findAll();
+  async findAll(@Query('active') active?: boolean) {
+    return await this.collaboratorsService.findAll(active ? true : undefined);
   }
 
   @Get(':id')

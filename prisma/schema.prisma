@@ -7,6 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Status {
+  PENDENTE
+  AGUARDANDO_ESTOQUE
+  ENVIADO
+  CANCELADO
+  CONCLUIDO
+}
+
 model User {
   id               String              @id @default(uuid())
   name             String
@@ -120,30 +128,17 @@ model ProductImage {
 }
 
 model ProductCollection {
-  id                        String                  @id @default(uuid())
-  userId                    String                  @map("user_id")
-  productId                 String                  @map("product_id")
-  productCollectionStatusId String                  @map("product_collection_status_id")
-  createdAt                 DateTime                @default(now()) @map("created_at")
-  updatedAt                 DateTime                @default(now()) @map("updated_at")
-  deletedAt                 DateTime?               @map("deleted_at")
-  productCollectionStatus   ProductCollectionStatus @relation(fields: [productCollectionStatusId], references: [id])
-  product                   Product                 @relation(fields: [productId], references: [id])
-  user                      User                    @relation(fields: [userId], references: [id])
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  productId String    @map("product_id")
+  status    Status    @default(PENDENTE)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  product   Product   @relation(fields: [productId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
 
   @@map("product_collections")
-}
-
-model ProductCollectionStatus {
-  id                String              @id @default(uuid())
-  description       String              @map("description")
-  active            Boolean             @default(true)
-  createdAt         DateTime            @default(now()) @map("created_at")
-  updatedAt         DateTime            @default(now()) @map("updated_at")
-  deletedAt         DateTime?           @map("deleted_at")
-  productCollection ProductCollection[]
-
-  @@map("product_collection_status")
 }
 
 model Publication {
