@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { CollectionsService } from './collections.service';
 import { CreateCollectionDto } from './dto/create-collection.dto';
@@ -39,8 +40,8 @@ export class CollectionsController {
 
   @UseGuards(AuthGuardAdmin)
   @Get('admin')
-  findAllAdmin() {
-    return this.collectionsService.findAll();
+  findAllAdmin(@Query('userId') userId: string) {
+    return this.collectionsService.findAll(userId);
   }
 
   @UseGuards(AuthGuard)
