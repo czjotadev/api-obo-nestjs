@@ -37,6 +37,12 @@ export class CollectionsController {
     return this.collectionsService.findAll(userId);
   }
 
+  @UseGuards(AuthGuardAdmin)
+  @Get('admin')
+  findAllAdmin() {
+    return this.collectionsService.findAll();
+  }
+
   @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string, @Req() request: Request) {

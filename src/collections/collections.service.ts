@@ -22,7 +22,7 @@ export class CollectionsService {
     }
   }
 
-  async findAll(userId: string) {
+  async findAll(userId?: string) {
     try {
       return await this.prismaClient.productCollection.findMany({
         where: {
@@ -40,6 +40,14 @@ export class CollectionsService {
               name: true,
               description: true,
               price: true,
+              productCategories: true,
+              productImages: true,
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              name: true,
             },
           },
         },
@@ -71,6 +79,14 @@ export class CollectionsService {
               name: true,
               description: true,
               price: true,
+              productCategories: true,
+              productImages: true,
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              name: true,
             },
           },
         },
