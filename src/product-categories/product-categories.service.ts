@@ -33,6 +33,7 @@ export class ProductCategoriesService {
           description: true,
           title: true,
           active: true,
+          _count: true,
         },
         where: {
           deletedAt: null,
