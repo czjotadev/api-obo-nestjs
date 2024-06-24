@@ -37,6 +37,11 @@ export class ProductCategoriesService {
         },
         where: {
           deletedAt: null,
+          produts: {
+            every: {
+              deletedAt: null,
+            },
+          },
         },
       });
       return categories;

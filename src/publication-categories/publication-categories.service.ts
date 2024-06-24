@@ -37,6 +37,11 @@ export class PublicationCategoriesService {
         },
         where: {
           deletedAt: null,
+          Publication: {
+            every: {
+              deletedAt: null,
+            },
+          },
         },
       });
       return categories;
