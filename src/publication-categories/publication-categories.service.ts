@@ -33,14 +33,7 @@ export class PublicationCategoriesService {
           description: true,
           title: true,
           active: true,
-          Publication: {
-            where: {
-              deletedAt: null,
-            },
-            select: {
-              _count: true,
-            },
-          },
+          _count: true,
         },
         where: {
           deletedAt: null,

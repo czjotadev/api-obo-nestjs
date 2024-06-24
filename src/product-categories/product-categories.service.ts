@@ -37,11 +37,6 @@ export class ProductCategoriesService {
         },
         where: {
           deletedAt: null,
-          produts: {
-            none: {
-              deletedAt: null,
-            },
-          },
         },
       });
       return categories;
