@@ -38,7 +38,7 @@ export class PublicationCategoriesService {
         where: {
           deletedAt: null,
           Publication: {
-            every: {
+            some: {
               deletedAt: null,
             },
           },

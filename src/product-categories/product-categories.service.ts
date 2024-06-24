@@ -38,7 +38,7 @@ export class ProductCategoriesService {
         where: {
           deletedAt: null,
           produts: {
-            every: {
+            some: {
               deletedAt: null,
             },
           },
