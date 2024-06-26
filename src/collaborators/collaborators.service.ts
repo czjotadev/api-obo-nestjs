@@ -12,7 +12,7 @@ export class CollaboratorsService {
 
       const verifyCollaborator =
         await this.prismaClient.userCollaborator.findFirst({
-          where: { userId },
+          where: { userId, deletedAt: null },
         });
 
       if (verifyCollaborator) {

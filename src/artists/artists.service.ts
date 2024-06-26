@@ -147,7 +147,7 @@ export class ArtistsService {
     files: Array<Express.Multer.File>,
   ): Promise<{ message: string }> {
     try {
-      const { biography, email, phone, instagram } = updateArtistDto;
+      const { biography, email, phone, instagram, active } = updateArtistDto;
 
       const artist = await this.prismaClient.userArtist.findFirstOrThrow({
         where: { id },
@@ -159,11 +159,30 @@ export class ArtistsService {
           email,
           phone,
           instagram,
+          active,
         },
         where: { id },
       });
 
       if (files) {
+        const artistFiles = await this.prismaClient.userArtistImage.findMany({
+          where: {
+            userArtistId: id,
+          },
+          select: {
+            id: true,
+            path: true,
+          },
+        });
+
+        await this.removeImages(artistFiles);
+
+        await this.prismaClient.userArtistImage.deleteMany({
+          where: {
+            userArtistId: id,
+          },
+        });
+
         files.map(async (file) => {
           await this.prismaClient.userArtistImage.create({
             data: {
@@ -177,6 +196,7 @@ export class ArtistsService {
 
       return { message: 'Artista atualizado com sucesso!' };
     } catch (error) {
+      console.error(error);
       throw new HttpException(
         { message: 'Erro ao atualizar artista.' },
         HttpStatus.BAD_REQUEST,
